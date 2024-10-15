@@ -21,6 +21,6 @@ This project aims to develop a **Health Tracker** solution that empowers users t
   - Show a leaderboard of users based on health score calculated using the nutrition, exercise and sleep details
 
 ### Team
-- Gaurav Mahla (24M0763)
+- Akash Rawat (24M0760) 
 - Rudreshwar Shandilya (24M0762)
-- Akash Rawat (24M0760)
+- Gaurav Mahla (24M0763)
