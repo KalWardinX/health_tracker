@@ -23,4 +23,4 @@ This project aims to develop a **Health Tracker** solution that empowers users t
 ### Team
 - Gaurav Mahla (24M0763)
 - Rudreshwar Shandilya (24M0762)
-- Akash Rawat (24M0763)
+- Akash Rawat (24M0760)
