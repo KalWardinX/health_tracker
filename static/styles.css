@@ -1,0 +1,13 @@
+.navbar{
+    display: flex;
+    justify-content: space-between;
+    /* background-color: brown; */
+}
+.nav-child-1{
+    display: flex;
+    justify-content: space-between;
+}
+.nav-child-2{
+    display: flex;
+    justify-content: space-between;
+}

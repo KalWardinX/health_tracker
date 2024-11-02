@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="navbar">
+    <div class="nav-child-1">Health Tracker</div>
+    <div class="nav-child-2">
+        <div class="nav-child-3">
+            <a class="active" href="{{ url_for('home') }}"><i class="fa fa-fw fa-home"></i> Home</a>
+        </div>
+        <div class="nav-child-3">
+            <a href="#"><i class="fa fa-fw fa-search"></i> Search</a>
+        </div>
+        <div class="nav-child-3">
+            <a href="#"><i class="fa fa-fw fa-envelope"></i> Contact</a>
+        </div>
+        <div class="nav-child-3">
+            <a href="{{ url_for('login') }}"><i class="fa fa-fw fa-user"></i> Logout</a>
+        </div>
+    </div>
+</div>
+<div class="nutrition-form">
+    <script>
+        function addToSelected(item) {
+            const selectedContainer = document.getElementById('selected-values');
+            if (!document.getElementById('selected-' + item)) {
+                const listItem = document.createElement('li');
+                listItem.textContent = item;
+                listItem.id = 'selected-' + item;
+                selectedContainer.appendChild(listItem);
+            }
+        }
+    </script>
+    <h2>Nutrient</h2>
+        <form method="POST">
+        {{ form.hidden_tag() }}
+        {{ form.search.label }} {{ form.search }}
+        {{ form.submit }}
+    </form>
+
+    {% if results %}
+        <h2>Search Results</h2>
+        <div id="results">
+            {% for item in results %}
+                <button type="button" onclick='addToSelected("{{ item }}")'>{{ item }}</button>
+            {% endfor %}
+        </div>
+    {% endif %}
+    
+    <form action="{{ url_for('home') }}" method="POST">
+    <h2>Selected Values</h2>
+    <ul id="selected-values" name="selected" value="selected"></ul>
+    <button type="submit" class="login-btn" style="font-size: large;">Submit</button>
+    </form>
+</div>
+{% endblock content %}
