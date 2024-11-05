@@ -1,34 +1,36 @@
 {% extends "layouts.html" %}
 {% block content %}
-    <div class="signup-container">
-        <h2>Signup</h2>
+<div class="card" style="display: flex; justify-content: center; align-items: center; 
+                    margin-top: 150px; width:400px; height: 550px; 
+                    margin-left:720px; padding-top: 20px;
+                    background-image: linear-gradient(to right, rgb(188, 190, 209), rgb(135, 153, 206));">
+    <div class="card-body">
+        <h2 class="card-title">Signup</h2>
         <form action="{{ url_for('signup') }}" method="POST">
             {{ form.hidden_tag() }}
-            <fieldset>
-                <legend>Join Today</legend>
-                <div>
-                    {{ form.username.label() }}
-                    {{ form.username }}
+                <div class="login-inputs">
+                    {{ form.username.label(style="margin-right: 30px") }}
+                    {{ form.username(style="width:100%") }}
                 </div>
-                <div>
-                    {{ form.email.label() }}
-                    {{ form.email }}
+                <div class="login-inputs">
+                    {{ form.email.label(style="margin-right: 80px") }}
+                    {{ form.email(style="width:100%") }}
                 </div>
-                <div>
-                    {{ form.password.label() }}
-                    {{ form.password }}
+                <div class="login-inputs">
+                    {{ form.password.label(style="margin-right: 60px") }}
+                    {{ form.password(style="width:100%") }}
                 </div>
-                <div>
+                <div class="login-inputs">
                     {{ form.confirm_pass.label() }}
-                    {{ form.confirm_pass }}
+                    {{ form.confirm_pass(style="width:100%") }}
                 </div>
-            </fieldset>
+            <div style="display: flex; justify-content: center; align-items: center; margin-top: 5px; margin-bottom: 10px;">
+                {{ form.submit(class="btn btn-outline-success btn-block s-btn") }}
+            </div>
             <div>
-                {{ form.submit() }}
+                Already have an account? <a style="color: darkblue;" href="{{ url_for('login') }}">Log In</a>
             </div>
         </form>
     </div>
-    <div>
-        Already have an account <a href="{{ url_for('login') }}">Log In</a>
-    </div>
+</div>
 {% endblock content %}

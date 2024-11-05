@@ -1,13 +1,50 @@
 .navbar{
     display: flex;
     justify-content: space-between;
-    /* background-color: brown; */
+    background-color: bisque;
+    height: 80px;
+    align-items: center;
 }
 .nav-child-1{
     display: flex;
+    margin-left: 200px;
     justify-content: space-between;
 }
 .nav-child-2{
     display: flex;
     justify-content: space-between;
+    font-size: larger;
+}
+
+.nav-child-3{
+    padding: 5px 5px 5px 5px;
+    border-radius: 5px;
+    text-decoration: none;
+}
+
+ .login-container {
+    border: #0095f6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    flex-direction: column;
+    /* background-color: black; */
+    /* padding: 0px 20px 20px 20px; */
+    color: white;
+}
+
+.form{
+    background-color: black;
+    padding: 20px 20px 20px 20px;
+    border-radius: 10px;
+    
+}
+
+.s-btn{
+    color: darkblue;
+}
+.login-inputs{
+    padding: 5px 5px 5px 5px;
+
 }

@@ -1,25 +1,28 @@
 {% extends "layouts.html" %}
 {% block content %}
-    <div class="login-container">
-        <h2>Login</h2>
+<div class="card" style="display: flex; justify-content: center; align-items: center; 
+                    margin-top: 250px; width:430px; height: 400px; margin-left:700px; 
+                    padding-top: 20px; opacity: 1;
+                    background-image: linear-gradient(to right, rgb(188, 190, 209), rgb(135, 153, 206));">
+    <div class="card-body">
+            <h2 class="card-title">Login</h2>
         <form action="{{ url_for('login') }}" method="POST">
             {{ form.hidden_tag() }}
-            <fieldset>
-                <div>
-                    {{ form.username.label() }}
-                    {{ form.username }}
+                <div class="login-inputs">
+                    {{ form.username.label(style="margin-right: 30px") }}
+                    {{ form.username(style="width:100%") }}
                 </div>
-                <div>
-                    {{ form.password.label() }}
-                    {{ form.password }}
+                <div class="login-inputs">
+                    {{ form.password.label(style="margin-right: 60px") }}
+                    {{ form.password(style="width:100%") }}
                 </div>
-            </fieldset>
-            <div>
-                {{ form.submit() }}
+            <div style="display: flex; justify-content: center; align-items: center; margin-top: 10px;">
+                {{ form.submit(class="btn btn-outline-success btn-block s-btn") }}
             </div>
         </form>
+        <div style="padding: 10px 10px 10px 10px;">
+            Don't have an account? <a style="text-decoration: none; color: darkblue;" href="{{ url_for('signup') }}">Sign Up</a>
+        </div>
     </div>
-    <div>
-        Don't have an account <a href="{{ url_for('signup') }}">Sign Up</a>
-    </div>
+</div>
 {% endblock content %}
