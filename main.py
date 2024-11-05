@@ -20,12 +20,17 @@ from wtforms.validators import DataRequired
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key'
 
-jsonfile = open('static/file.json', 'r')
-data = json.load(jsonfile)
-values = data['Nutrition Values']
+jsonfile1 = open('./static/nutrients.json', 'r')
+nutrients_data = json.load(jsonfile1)
+nutrients_values = nutrients_data['Nutrition Values']
 foods = []
 
-for value in values:
+jsonfile2 = open('./static/exercise.json', 'r')
+excercises_data = json.load(jsonfile2)
+excercises_values = excercises_data['Exercise Values']
+excercises = []
+
+for value in nutrients_values:
     food = value["Food"]
     foods.append(food)
 
@@ -112,6 +117,17 @@ class Exercise(Base):
     pushups = Column(Integer)
     squats = Column(Integer)
     plank = Column(Float)
+
+
+class NutritionSearchForm(FlaskForm):
+    search = StringField('Search', validators=[DataRequired()])
+    submit = SubmitField('Search')
+
+
+class ExerciseSearchForm(FlaskForm):
+    search = StringField('Search', validators=[DataRequired()])
+    submit = SubmitField('Search')
+
 
 # Create the table in the database
 Base.metadata.create_all(engine)

@@ -1,19 +1,21 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="navbar">
-    <div class="nav-child-1">Health Tracker</div>
+    <div class="nav-child-1">
+        <img src="./static/logo.png" width="50px" height="50px">
+    </div>
     <div class="nav-child-2">
         <div class="nav-child-3">
-            <a class="active" href="{{ url_for('home') }}"><i class="fa fa-fw fa-home"></i> Home</a>
+            <a style="text-decoration: none;" href="{{ url_for('home') }}"><i class="fa fa-fw fa-home"></i> Home</a>
         </div>
         <div class="nav-child-3">
-            <a href="#"><i class="fa fa-fw fa-search"></i> Search</a>
+            <a style="text-decoration: none;" href="#"><i class="fa fa-fw fa-search"></i> Search</a>
         </div>
         <div class="nav-child-3">
-            <a href="#"><i class="fa fa-fw fa-envelope"></i> Contact</a>
+            <a style="text-decoration: none;" href="#"><i class="fa fa-fw fa-envelope"></i> Contact</a>
         </div>
         <div class="nav-child-3">
-            <a href="{{ url_for('login') }}"><i class="fa fa-fw fa-user"></i> Logout</a>
+            <a style="text-decoration: none; margin-right: 10px;" href="{{ url_for('login') }}"><i class="fa fa-fw fa-user"></i> Logout</a>
         </div>
     </div>
 </div>
@@ -42,6 +44,7 @@
         }
 
     </script>
+    
     <h2>Nutrient</h2>
     <form method="POST">
         {{ form.hidden_tag() }}
@@ -84,4 +87,5 @@
     
 
 </div>
+
 {% endblock content %}
