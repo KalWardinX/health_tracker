@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dual Listbox with Search Example</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .listbox {
+            width: 150px;
+            height: 150px;
+            overflow: auto;
+        }
+        .button {
+            margin: 5px;
+        }
+        .search {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <form method="post">
+        {{ form.hidden_tag() }}
+        <fieldset>
+            <label for="food-item-search">Filter Item in food</label>
+            <input type="search" name="food-item-search" id="filter_item" oninput="filterItems('filter_item', 'select_food')">
+            <label for="food-items"></label>
+            <select name="food-items" id="select_food" class="listbox" multiple>
+                {% for index, item in data %}
+                <option value="{{ index }}" onclick="addToText('{{item}}','{{index}}', 'text_food_list', '')">{{item}}</option>
+                {% endfor %}
+            </select>
+            <label for="food-list">Food you selected</label>
+            <!-- <textarea name="food-list" id="text_food_list"></textarea> -->
+            {{ form.food_items(id='text_food_list') }}
+        </fieldset>
+        {{ form.submit() }}
+    </form>
+    <script>
+        function filterItems(searchInputId, listId) {
+            const searchInput = document.getElementById(searchInputId);
+            const filter = searchInput.value.toLowerCase();
+            const list = document.getElementById(listId);
+            const options = list.getElementsByTagName('option');
+
+            for (let i = 0; i < options.length; i++) {
+                const option = options[i];
+                const text = option.textContent || option.innerText;
+                option.style.display = text.toLowerCase().indexOf(filter) > -1 ? '' : 'none';
+            }
+        }
+        function addToText(item,value, id){
+            let found = false
+            const textArea = document.getElementById(id)
+            console.log(textArea)
+            // console.log('hi')
+            // console.log(type(id))
+            // console.log('hi')
+            let val = textArea.value
+            // console.log(type(text))
+            if (val){
+                let i = 0
+                let ind = -1
+                let arr = val.split('; ')
+                for(i=0; i<arr.length; i+=1){
+                    if(arr[i].split('(x')[0] == item){
+                        console.log(arr[i])
+                        let index = arr[i].indexOf('(x')
+                        console.log(index)
+                        if(index>=0){
+                            let num = Number(arr[i].split('(x')[1].split(')')[0])
+                            
+                            console.log(num)
+                            arr[i] = arr[i].split('(x')[0] + `(x${num+1})`
+                        }
+                        else{
+                            arr[i] =  `${arr[i]}(x2)`
+                        }
+                        found=true
+                    }
+                }
+                // console.log(arr)
+                val = arr[0].toString()
+                let flag = true
+                arr.forEach(element =>{
+                    if(!flag){
+                        val += `; ${element}`
+                    }else{
+                        flag = false
+                    }
+                })
+                // console.log(val)
+            }else{
+                val += `${item}`
+                found = true
+            }
+            if (!found){
+                val += `; ${item}`
+            }
+            textArea.value = val
+
+        }
+    </script>
+</body>
+</html>

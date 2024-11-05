@@ -19,36 +19,69 @@
 </div>
 <div class="nutrition-form">
     <script>
-        function addToSelected(item) {
-            const selectedContainer = document.getElementById('selected-values');
-            if (!document.getElementById('selected-' + item)) {
-                const listItem = document.createElement('li');
-                listItem.textContent = item;
-                listItem.id = 'selected-' + item;
-                selectedContainer.appendChild(listItem);
+        function moveItems(sourceId, targetId) {
+            const source = document.getElementById(sourceId);
+            const target = document.getElementById(targetId);
+            const selectedOptions = Array.from(source.selectedOptions);
+            selectedOptions.forEach(option => {
+                target.appendChild(option);
+            });
+        }
+
+        function filterItems(searchInputId, listId) {
+            const searchInput = document.getElementById(searchInputId);
+            const filter = searchInput.value.toLowerCase();
+            const list = document.getElementById(listId);
+            const options = list.getElementsByTagName('option');
+
+            for (let i = 0; i < options.length; i++) {
+                const option = options[i];
+                const text = option.textContent || option.innerText;
+                option.style.display = text.toLowerCase().indexOf(filter) > -1 ? '' : 'none';
             }
         }
+
     </script>
     <h2>Nutrient</h2>
-        <form method="POST">
+    <form method="POST">
         {{ form.hidden_tag() }}
-        {{ form.search.label }} {{ form.search }}
-        {{ form.submit }}
+        <div style="display: flex; align-items: center;">
+            <div>
+                <label for="items">{{ form.items.label }}</label><br>
+                <input type="text" id="searchAvailable" class="search" placeholder="Search..." oninput="filterItems('searchAvailable', 'availableList')">
+                <select id="availableList" name="items" class="listbox" multiple>
+                    {% for value, label in form.items.choices %}
+                        <option value="{{ value }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div style="margin: 0 10px;">
+                <button type="button" class="button" onclick="moveItems('availableList', 'selectedList')"> &gt;&gt; </button><br>
+                <button type="button" class="button" onclick="moveItems('selectedList', 'availableList')"> &lt;&lt; </button>
+            </div>
+            <div>
+                <label for="selectedList">Selected Items</label><br>
+                <input type="text" id="searchSelected" class="search" placeholder="Search..." oninput="filterItems('searchSelected', 'selectedList')">
+                <select id="selectedList" name="items" class="listbox" multiple>
+                </select>
+            </div>
+        </div>
+        <br>
+        <div>
+            {{ form.submit() }}
+        </div>
     </form>
 
-    {% if results %}
-        <h2>Search Results</h2>
-        <div id="results">
-            {% for item in results %}
-                <button type="button" onclick='addToSelected("{{ item }}")'>{{ item }}</button>
-            {% endfor %}
-        </div>
-    {% endif %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul>
+                {% for category, message in messages %}
+                    <li style="color: red ;">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
     
-    <form action="{{ url_for('home') }}" method="POST">
-    <h2>Selected Values</h2>
-    <ul id="selected-values" name="selected" value="selected"></ul>
-    <button type="submit" class="login-btn" style="font-size: large;">Submit</button>
-    </form>
+
 </div>
 {% endblock content %}
