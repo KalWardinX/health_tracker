@@ -20,16 +20,26 @@
     </div>
 </div>
 <div class="nutrition-form">
+    <h2>Nutrient</h2>
+    <form method="post">
+        {{ form.hidden_tag() }}
+        <fieldset>
+            <label for="food-item-search">Filter Item in food</label>
+            <input type="search" name="food-item-search" id="filter_item" oninput="filterItems('filter_item', 'select_food')">
+            <label for="food-items"></label>
+            <select name="food-items" id="select_food" class="listbox" multiple>
+                {% for index, item in data %}
+                <option value="{{ index }}" onclick="addToText('{{item}}','{{index}}', 'text_food_list', '')">{{item}}</option>
+                {% endfor %}
+            </select>
+            <label for="food-list">Food you selected</label>
+            <!-- <textarea name="food-list" id="text_food_list"></textarea> -->
+            {{ form.food_items.label() }}
+            {{ form.food_items(id='text_food_list') }}
+        </fieldset>
+        {{ form.submit() }}
+    </form>
     <script>
-        function moveItems(sourceId, targetId) {
-            const source = document.getElementById(sourceId);
-            const target = document.getElementById(targetId);
-            const selectedOptions = Array.from(source.selectedOptions);
-            selectedOptions.forEach(option => {
-                target.appendChild(option);
-            });
-        }
-
         function filterItems(searchInputId, listId) {
             const searchInput = document.getElementById(searchInputId);
             const filter = searchInput.value.toLowerCase();
@@ -42,38 +52,58 @@
                 option.style.display = text.toLowerCase().indexOf(filter) > -1 ? '' : 'none';
             }
         }
+        function addToText(item,value, id){
+            let found = false
+            const textArea = document.getElementById(id)
+            console.log(textArea)
+            // console.log('hi')
+            // console.log(type(id))
+            // console.log('hi')
+            let val = textArea.value
+            // console.log(type(text))
+            if (val){
+                let i = 0
+                let ind = -1
+                let arr = val.split('; ')
+                for(i=0; i<arr.length; i+=1){
+                    if(arr[i].split('(x')[0] == item){
+                        console.log(arr[i])
+                        let index = arr[i].indexOf('(x')
+                        console.log(index)
+                        if(index>=0){
+                            let num = Number(arr[i].split('(x')[1].split(')')[0])
+                            
+                            console.log(num)
+                            arr[i] = arr[i].split('(x')[0] + `(x${num+1})`
+                        }
+                        else{
+                            arr[i] =  `${arr[i]}(x2)`
+                        }
+                        found=true
+                    }
+                }
+                // console.log(arr)
+                val = arr[0].toString()
+                let flag = true
+                arr.forEach(element =>{
+                    if(!flag){
+                        val += `; ${element}`
+                    }else{
+                        flag = false
+                    }
+                })
+                // console.log(val)
+            }else{
+                val += `${item}`
+                found = true
+            }
+            if (!found){
+                val += `; ${item}`
+            }
+            textArea.value = val
 
+        }
     </script>
-    
-    <h2>Nutrient</h2>
-    <form method="POST">
-        {{ form.hidden_tag() }}
-        <div style="display: flex; align-items: center;">
-            <div>
-                <label for="items">{{ form.items.label }}</label><br>
-                <input type="text" id="searchAvailable" class="search" placeholder="Search..." oninput="filterItems('searchAvailable', 'availableList')">
-                <select id="availableList" name="items" class="listbox" multiple>
-                    {% for value, label in form.items.choices %}
-                        <option value="{{ value }}">{{ label }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div style="margin: 0 10px;">
-                <button type="button" class="button" onclick="moveItems('availableList', 'selectedList')"> &gt;&gt; </button><br>
-                <button type="button" class="button" onclick="moveItems('selectedList', 'availableList')"> &lt;&lt; </button>
-            </div>
-            <div>
-                <label for="selectedList">Selected Items</label><br>
-                <input type="text" id="searchSelected" class="search" placeholder="Search..." oninput="filterItems('searchSelected', 'selectedList')">
-                <select id="selectedList" name="items" class="listbox" multiple>
-                </select>
-            </div>
-        </div>
-        <br>
-        <div>
-            {{ form.submit() }}
-        </div>
-    </form>
 
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}

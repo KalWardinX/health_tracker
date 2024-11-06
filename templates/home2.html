@@ -1,42 +1,40 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dual Listbox with Search Example</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        .listbox {
-            width: 150px;
-            height: 150px;
-            overflow: auto;
-        }
-        .button {
-            margin: 5px;
-        }
-        .search {
-            margin-bottom: 10px;
-        }
-    </style>
-</head>
-<body>
+{% extends "base.html" %}
+{% block content %}
+<div class="navbar">
+    <div class="nav-child-1">
+        <img src="./static/logo.png" width="50px" height="50px">
+    </div>
+    <div class="nav-child-2">
+        <div class="nav-child-3">
+            <a style="text-decoration: none;" href="{{ url_for('home') }}"><i class="fa fa-fw fa-home"></i> Home</a>
+        </div>
+        <div class="nav-child-3">
+            <a style="text-decoration: none;" href="#"><i class="fa fa-fw fa-search"></i> Search</a>
+        </div>
+        <div class="nav-child-3">
+            <a style="text-decoration: none;" href="#"><i class="fa fa-fw fa-envelope"></i> Contact</a>
+        </div>
+        <div class="nav-child-3">
+            <a style="text-decoration: none; margin-right: 10px;" href="{{ url_for('login') }}"><i class="fa fa-fw fa-user"></i> Logout</a>
+        </div>
+    </div>
+</div>
+<div class="nutrition-form">
+    <h2>Nutrient</h2>
     <form method="post">
         {{ form.hidden_tag() }}
         <fieldset>
-            <label for="food-item-search">Filter Item in food</label>
-            <input type="search" name="food-item-search" id="filter_item" oninput="filterItems('filter_item', 'select_food')">
-            <label for="food-items"></label>
-            <select name="food-items" id="select_food" class="listbox" multiple>
+            <label for="exercise-item-search">Filter Item in Exercise</label>
+            <input type="search" name="exercise-item-search" id="filter_item" oninput="filterItems('filter_item', 'select_exercise')">
+            <label for="exercise-items"></label>
+            <select name="exercise-items" id="select_exercise" class="listbox" multiple>
                 {% for index, item in data %}
-                <option value="{{ index }}" onclick="addToText('{{item}}','{{index}}', 'text_food_list', '')">{{item}}</option>
+                <option value="{{ index }}" onclick="addToText('{{item}}','{{index}}', 'text_exercise_list', '')">{{item}}</option>
                 {% endfor %}
             </select>
-            <label for="food-list">Food you selected</label>
-            <!-- <textarea name="food-list" id="text_food_list"></textarea> -->
-            {{ form.food_items(id='text_food_list') }}
+            <!-- <textarea name="exercise-list" id="text_exercise_list"></textarea> -->
+            {{ form.exercise_items.label() }}
+            {{ form.exercise_items(id='text_exercise_list') }}
         </fieldset>
         {{ form.submit() }}
     </form>
@@ -105,5 +103,18 @@
 
         }
     </script>
-</body>
-</html>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul>
+                {% for category, message in messages %}
+                    <li style="color: red ;">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+    
+
+</div>
+
+{% endblock content %}

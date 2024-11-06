@@ -20,19 +20,13 @@ from wtforms.validators import DataRequired
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key'
 
-jsonfile1 = open('./static/nutrients.json', 'r')
-nutrients_data = json.load(jsonfile1)
-nutrients_values = nutrients_data['Nutrition Values']
-foods = []
+jsonfile1 = open('static/nutrients.json', 'r')
+data_food = json.load(jsonfile1)
 
-jsonfile2 = open('./static/exercise.json', 'r')
-excercises_data = json.load(jsonfile2)
-excercises_values = excercises_data['Exercise Values']
-excercises = []
 
-for value in nutrients_values:
-    food = value["Food"]
-    foods.append(food)
+jsonfile2 = open('static/exercise.json', 'r')
+data_exercise = json.load(jsonfile2)
+
 
 from wtforms import SelectMultipleField, widgets
 from markupsafe import Markup
@@ -65,13 +59,18 @@ class MultiCheckboxField(SelectMultipleField):
 #     items = MultiCheckboxField('Food Items', choices=__items, option_widget=None)
 #     submit = SubmitField('Submit')
 
-class SearchForm(FlaskForm):
+class NutritionForm(FlaskForm):
     food_items = TextAreaField("food-items", validators=[DataRequired()])
     submit = SubmitField('Submit')
 
 app.config['SECRET_KEY'] = '1856a607f1d8fc35957b1566f7e9030a'
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///tech-stack.db"
 DATABASE_URL = "sqlite:///health-tracker.db"
+
+class ExerciseForm(FlaskForm):
+    exercise_items = TextAreaField("exercise-items", validators=[DataRequired()])
+    submit = SubmitField('Submit')
+
 
 class Base(DeclarativeBase):
     pass
@@ -112,11 +111,11 @@ class Exercise(Base):
     weight = Column(Float)
     height = Column(Float)
     burnt_calories = Column(Float)
-    running = Column(Float)
-    cycling = Column(Float)
-    pushups = Column(Integer)
-    squats = Column(Integer)
-    plank = Column(Float)
+    # running = Column(Float)
+    # cycling = Column(Float)
+    # pushups = Column(Integer)
+    # squats = Column(Integer)
+    # plank = Column(Float)
 
 
 class NutritionSearchForm(FlaskForm):
@@ -154,17 +153,17 @@ def home():
     __food_items = []
     _food_dict = {}
     i = 0
-    for food_dict in data['Nutrition Values']:
+    for food_dict in data_food['Nutrition Values']:
         __food_items.append((i,food_dict['Food']))
         _food_dict[food_dict['Food']] = i
         i+=1
-    form = SearchForm()
-    selected_items = request.form.getlist('items')
+    form = NutritionForm()
+    # selected_items = request.form.getlist('items')
     # print(selected_items)
     # print('hi')
     if request.method == 'POST':
         # push to database
-        print('hi')
+        # print('hi')
         flash(f'Selcected Food Items: {", ".join(form.food_items.data)}', 'success')
         print(form.food_items.data)
         protein = 0
@@ -177,8 +176,8 @@ def home():
             _i = i.split('(x')[0]
             print(type(_i))
             print(_i)
-            food = data['Nutrition Values'][_food_dict[_i]]
-            print(food)
+            food = data_food['Nutrition Values'][_food_dict[_i]]
+            # print(food)
             protein += float(food['Protein'].replace(',','')) if food['Protein']!='t' else 0
             fat += float(food['Fat'].replace(',','')) if food['Fat']!='t' else 0
             Sat_fat += float(food['Sat.Fat'].replace(',','')) if food['Sat.Fat']!='t' else 0
@@ -200,7 +199,40 @@ def home():
         session.commit()
         return redirect(url_for('home'))
 
-    return render_template("home2.html", title="Home", form=form, data=__food_items)
+    return render_template("home.html", title="Home", form=form, data=__food_items)
+
+@app.route("/home2", methods=['GET', 'POST'])
+def home2():
+    __exercises_items = []
+    _exercises_dict = {}
+    i = 0
+    for exercise in data_exercise["Exercise Values"]:
+        e = exercise["Activity, Exercise or Sport (1 hour)"]
+        __exercises_items.append((i,e))
+        _exercises_dict[e] = i
+        i+=1
+    
+    form = ExerciseForm()
+    weight = 60
+    if request.method == "POST":
+        flash(f'Selcected Exercise Items: {", ".join(form.exercise_items.data)}', 'success')
+        print(form.exercise_items)
+        burnt_calories = 0
+        for i in form.exercise_items.data.split('; '):
+            _i = i.split('(x')[0]
+            exercise = data_exercise['Exercise Values'][_exercises_dict[_i]]
+            burnt_calories = float(weight)*float(exercise["Calories per kg"])
+        
+        exercise_obj = Exercise(
+            day = time.localtime().tm_yday,
+            burnt_calories = burnt_calories,
+        )
+        print(exercise_obj)
+        session.add(exercise_obj)
+        session.commit()
+        return redirect(url_for('home2'))
+    return render_template("home2.html", title="Home", form=form, data=__exercises_items)
+
 
 @app.route("/")
 @app.route("/login", methods=["GET", "POST"])
