@@ -19,25 +19,49 @@
         </div>
     </div>
 </div>
-<div class="nutrition-form">
-    <h2>Nutrient</h2>
+<div class="card" style="display: flex; justify-content: center; align-items: center;
+margin-top: 50px; width:600px; height: 700px; margin-left:50px; 
+padding: 20px 20px 20px 20px; opacity: 1; flex-direction: column;
+background-image: linear-gradient(to right, rgb(188, 190, 209), rgb(135, 153, 206));">
+<div class="card-body">
+    <div class="container">
+    <div class="row">    
+    <h2 class="card-title">Nutrient</h2>
+    </div>
+    <div class="row">
     <form method="post">
         {{ form.hidden_tag() }}
         <fieldset>
-            <label for="food-item-search">Filter Item in food</label>
-            <input type="search" name="food-item-search" id="filter_item" oninput="filterItems('filter_item', 'select_food')">
+        <div class="row" style="margin-top: 10px; margin-bottom: 5px;">
+            <div class="col-lg-4">
+            <label for="food-item-search">Filter foods</label>
+            </div>
+            <div class="col-lg-8">
+            <input style="width: 300px;" type="search" name="food-item-search" id="filter_item" oninput="filterItems('filter_item', 'select_food')">
+            </div>
+        </div>
+        <div class="row" style="margin-top: 10px; margin-bottom: 5px; margin-left: 155px;">
             <label for="food-items"></label>
-            <select name="food-items" id="select_food" class="listbox" multiple>
+            <select style="height: 200px; width: 300px;" name="food-items" id="select_food" class="listbox" multiple>
                 {% for index, item in data %}
                 <option value="{{ index }}" onclick="addToText('{{item}}','{{index}}', 'text_food_list', '')">{{item}}</option>
                 {% endfor %}
             </select>
-            <label for="food-list">Food you selected</label>
+        </div>
+        <div class="row" style="margin-top: 10px; margin-bottom: 5px;">
+            <!-- <label for="food-list">Food you selected</label> -->
             <!-- <textarea name="food-list" id="text_food_list"></textarea> -->
+            <div class="col-lg-4">
             {{ form.food_items.label() }}
-            {{ form.food_items(id='text_food_list') }}
+            </div>
+            <div class="col-lg-8">
+            {{ form.food_items(id='text_food_list', style="width: 300px; height: 200px;") }}
+            </div>
+        </div>
         </fieldset>
-        {{ form.submit() }}
+        <div style="display: flex; justify-content: center; align-items: center; margin-top: 30px;">
+            {{ form.submit(class="btn btn-outline-success btn-block s-btn") }}
+        </div>
     </form>
     <script>
         function filterItems(searchInputId, listId) {
@@ -104,18 +128,22 @@
 
         }
     </script>
-
+    <div class="row">
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             <ul>
                 {% for category, message in messages %}
+                <div class="row">
                     <li style="color: red ;">{{ message }}</li>
+                </div>
                 {% endfor %}
             </ul>
         {% endif %}
     {% endwith %}
-    
-
+    </div>
+    </div>
+    </div>
+</div>
 </div>
 
 {% endblock content %}

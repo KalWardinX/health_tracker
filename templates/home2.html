@@ -19,25 +19,51 @@
         </div>
     </div>
 </div>
-<div class="nutrition-form">
-    <h2>Nutrient</h2>
+<div class="card" style="display: flex; justify-content: center; align-items: center;
+margin-top: 50px; width:600px; height: 700px; margin-left:50px; 
+padding: 20px 20px 20px 20px; opacity: 1; flex-direction: column;
+background-image: linear-gradient(to right, rgb(188, 190, 209), rgb(135, 153, 206));">
+<div class="card-body">
+    <div class="container">
+    <div class="row">   
+    <h2 class="card-title">Exercise</h2>
+    </div>
+    <div class="row">
     <form method="post">
         {{ form.hidden_tag() }}
         <fieldset>
-            <label for="exercise-item-search">Filter Item in Exercise</label>
-            <input type="search" name="exercise-item-search" id="filter_item" oninput="filterItems('filter_item', 'select_exercise')">
+        <div class="row" style="margin-top: 10px; margin-bottom: 5px;">
+            <div class="col-lg-4">
+            <label for="exercise-item-search">Filter Exercise</label>
+            </div>
+            <div class="col-lg-8">
+            <input style="width: 300px;" type="search" name="exercise-item-search" id="filter_item" oninput="filterItems('filter_item', 'select_exercise')">
+            </div>
+        </div>
+        <div class="row" style="margin-top: 10px; margin-bottom: 5px; margin-left: 155px;">
             <label for="exercise-items"></label>
-            <select name="exercise-items" id="select_exercise" class="listbox" multiple>
+            <select style="height: 200px; width: 300px;" name="exercise-items" id="select_exercise" class="listbox" multiple>
                 {% for index, item in data %}
                 <option value="{{ index }}" onclick="addToText('{{item}}','{{index}}', 'text_exercise_list', '')">{{item}}</option>
                 {% endfor %}
             </select>
+        </div>
+        <div class="row" style="margin-top: 10px; margin-bottom: 5px;">
             <!-- <textarea name="exercise-list" id="text_exercise_list"></textarea> -->
+            <div class="col-lg-4">
             {{ form.exercise_items.label() }}
-            {{ form.exercise_items(id='text_exercise_list') }}
+            </div>
+            <div class="col-lg-8">
+            {{ form.exercise_items(id='text_exercise_list' , style="width: 300px; height: 200px;") }}
+            </div>
+        </div>
         </fieldset>
-        {{ form.submit() }}
+        <div style="display: flex; justify-content: center; align-items: center; margin-top: 30px;">
+            {{ form.submit(class="btn btn-outline-success btn-block s-btn") }}
+        </div>
     </form>
+    </div>
+    </div>
     <script>
         function filterItems(searchInputId, listId) {
             const searchInput = document.getElementById(searchInputId);
@@ -113,8 +139,8 @@
             </ul>
         {% endif %}
     {% endwith %}
-    
-
+</div>    
 </div>
-
+</div>
+</div>
 {% endblock content %}
