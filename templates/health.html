@@ -1,0 +1,193 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./static/styles.css">
+</head>
+<body style=" background-repeat: no-repeat; background-size: cover; opacity: 0.95;">
+<div>
+<div class="navbar">
+    <div class="nav-child-1" style="font-family: cursive; font-size: xx-large; font-weight: 800; font-style: italic;">    
+        <img src="./static/images/logo.png" width="50px" height="50px" class="rounded-circle" alt="logo">
+        <p style="margin-left: 10px">Health Tracker</p>
+    </div>
+    <div class="nav-child-2">
+        <div class="nav-child-3">
+            <a style="text-decoration: none; color: azure;" href="{{ url_for('home') }}"><i class="fa fa-fw fa-home"></i> Home</a>
+        </div>
+        <div class="nav-child-3">
+            <a style="text-decoration: none; color: azure;" href="#"><i class="fa fa-fw fa-envelope"></i> Contact</a>
+        </div>
+        <div class="nav-child-3">
+            <a style="text-decoration: none; color: azure;" href="{{ url_for('login') }}"><i class="fa fa-fw fa-user"></i> Logout</a>
+        </div>
+    </div>
+</div>
+
+<div class="box1 card">
+    <div class="bmi">
+        <div class="card bmi-child">
+            <div class="card-body "> BMI </div>
+        </div>
+        <div class="card bmi-child">
+            <div class="card-body"> Height </div>
+        </div>
+    </div>
+    <div class="bmi">
+        <div class="card bmi-child">
+            <div class="card-body"> Weight </div>
+        </div>
+        <div class="card bmi-child">
+            <div class="card-body">Health Score</div>
+        </div>
+    </div>
+    <div class="add-data">
+        <div style="padding-top: 20px ;">Add today's data</div>
+        <div class="exercise  btn btn-outline-success btn-block">
+                Exercise 
+        </div>
+        <div class="nutrition  btn btn-outline-success btn-block">
+            Nutrition
+        </div>
+    </div>
+    <div class="leaderboard">
+        <div style="margin-top: 5px;">Leaderboard</div>
+            <ol>
+                <li><div class="leaderboard-child">
+                    <span>User1</span> <span>Healthscore</span> 
+                </div>
+                </li>
+                <li>
+                <div class="leaderboard-child">
+                    <span>User1</span> <span>Healthscore</span>
+                </div>
+                </li>
+                <li><div class="leaderboard-child">
+                    <span>User1</span> <span>Healthscore</span>
+                </div>
+                </li>
+                <li>
+                <div class="leaderboard-child">
+                    <span>User1</span> <span>Healthscore</span>
+                </div>
+                </li>
+                <li><div class="leaderboard-child">
+                    <span>User1</span> <span>Healthscore</span> 
+                </div>
+                </li>
+                <li>
+                <div class="leaderboard-child">
+                    <span>User1</span> <span>Healthscore</span>
+                </div>
+                </li>
+                <li><div class="leaderboard-child">
+                    <span>User1</span> <span>Healthscore</span>
+                </div>
+                </li>
+                <li>
+                <div class="leaderboard-child">
+                    <span>User1</span> <span>Healthscore</span>
+                </div>
+                </li>
+                <li><div class="leaderboard-child">
+                    <span>User1</span> <span>Healthscore</span>
+                </div>
+                </li>
+                <li>
+                <div class="leaderboard-child">
+                    <span>User1</span> <span>Healthscore</span>
+                </div>
+                </li>
+            </ol>
+    </div>
+</div>
+<div class="today-data">
+    <div style="text-align: center; margin-top: auto; margin-bottom: auto; margin-left: 20px; margin-right: 20px; font-size: 2cap;">
+        Today's activity
+    </div>
+    <div class="bmi">
+        <div class="card bmi-child">
+            <div class="card-body"> Protein </div>
+        </div>
+        <div class="card bmi-child">
+            <div class="card-body">Calories intake</div>
+        </div>
+    </div>
+    <div class="today-data-child">
+        <div class="today-data-child-1"> Fat </div>
+        <div class="today-data-child-1"> sat_fat </div>
+        <div class="today-data-child-1"> carbs </div>
+        <div class="today-data-child-1"> fiber </div>
+    </div>
+        <div class="today-data-child" style="text-align: center;"> 
+            <div style="margin-top: 20px; font-size: 2.5cap;">
+                Calories Burnt
+            </div>
+            <div style="margin-top: 60px; font-size:5cap; font-family: 'Times New Roman', Times, serif;">
+                xyz kcal
+            </div> 
+        </div>
+        <div class="today-data-child-2" style="text-align: center;"> 
+            <div style="margin-top: 20px; font-size: 2.5cap;">
+                Exercises
+            </div>
+            <div style="padding: 0px 0px 0px 10px;">
+            <ol>
+                <li><div class="leaderboard-child-1">
+                    <span>User1</span> <span>Healthscore</span>
+                </div>
+                </li>
+                <li>
+                <div class="leaderboard-child-1">
+                    <span>User1</span> <span>Healthscore</span>
+                </div>
+                </li>
+                <li><div class="leaderboard-child-1">
+                    <span>User1</span> <span>Healthscore</span>
+                </div>
+                </li>
+                <li>
+                <div class="leaderboard-child-1">
+                    <span>User1</span> <span>Healthscore</span>
+                </div>
+                </li>
+                <li><div class="leaderboard-child-1">
+                    <span>User1</span> <span>Healthscore</span>
+                </div>
+                </li>
+                <li>
+                <div class="leaderboard-child-1">
+                    <span>User1</span> <span>Healthscore</span>
+                </div>
+                </li>
+                <li><div class="leaderboard-child-1">
+                    <span>User1</span> <span>Healthscore</span>
+                </div>
+                </li>
+                <li>
+                <div class="leaderboard-child-1">
+                    <span>User1</span> <span>Healthscore</span>
+                </div>
+                </li>
+            </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="box2 card">
+    <div class="calorie-burnt">
+        Calories Burnt Plot
+    </div>
+    <div class="health-score">
+        Health Score Plot
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

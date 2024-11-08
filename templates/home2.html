@@ -1,28 +1,36 @@
-{% extends "base.html" %}
-{% block content %}
+<!-- {% extends "base.html" %}
+{% block content %} -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./static/styles.css">
+</head>
+<body style="background-image: url('./static/images/cycle.jpg'); background-repeat: no-repeat; background-size: cover; opacity: 0.9;">
+<div>
 <div class="navbar">
-    <div class="nav-child-1">
-        <img src="./static/logo.png" width="50px" height="50px">
+    <div class="nav-child-1" style="font-family: cursive; font-size: xx-large; font-weight: 800; font-style: italic;">    
+        <img src="./static/images/logo.png" width="50px" height="50px" class="rounded-circle" alt="logo">
+        <p style="margin-left: 10px">Health Tracker</p>
     </div>
     <div class="nav-child-2">
         <div class="nav-child-3">
-            <a style="text-decoration: none;" href="{{ url_for('home') }}"><i class="fa fa-fw fa-home"></i> Home</a>
+            <a style="text-decoration: none; color: azure;" href="{{ url_for('home') }}"><i class="fa fa-fw fa-home"></i> Home</a>
         </div>
         <div class="nav-child-3">
-            <a style="text-decoration: none;" href="#"><i class="fa fa-fw fa-search"></i> Search</a>
+            <a style="text-decoration: none; color: azure;" href="#"><i class="fa fa-fw fa-envelope"></i> Contact</a>
         </div>
         <div class="nav-child-3">
-            <a style="text-decoration: none;" href="#"><i class="fa fa-fw fa-envelope"></i> Contact</a>
-        </div>
-        <div class="nav-child-3">
-            <a style="text-decoration: none; margin-right: 10px;" href="{{ url_for('login') }}"><i class="fa fa-fw fa-user"></i> Logout</a>
+            <a style="text-decoration: none; color: azure;" href="{{ url_for('login') }}"><i class="fa fa-fw fa-user"></i> Logout</a>
         </div>
     </div>
 </div>
 <div class="card" style="display: flex; justify-content: center; align-items: center;
-margin-top: 50px; width:600px; height: 700px; margin-left:50px; 
+margin-top: 40px; width:600px; height: 700px; margin-left:auto; margin-right: auto; 
 padding: 20px 20px 20px 20px; opacity: 1; flex-direction: column;
-background-image: linear-gradient(to right, rgb(188, 190, 209), rgb(135, 153, 206));">
+background-image: linear-gradient(to right, rgb(188, 190, 209, 0.5), rgba(135, 153, 206, 0.8)); color: black;">
 <div class="card-body">
     <div class="container">
     <div class="row">   
@@ -143,4 +151,9 @@ background-image: linear-gradient(to right, rgb(188, 190, 209), rgb(135, 153, 20
 </div>
 </div>
 </div>
-{% endblock content %}
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
+<!-- {% endblock content %} -->

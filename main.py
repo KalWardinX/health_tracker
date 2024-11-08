@@ -6,7 +6,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-from sqlalchemy import Column, Integer, String, Float
+from sqlalchemy import Column, Integer, String, Float, Date
 import json, string
 import time
 
@@ -111,12 +111,6 @@ class Exercise(Base):
     weight = Column(Float)
     height = Column(Float)
     burnt_calories = Column(Float)
-    # running = Column(Float)
-    # cycling = Column(Float)
-    # pushups = Column(Integer)
-    # squats = Column(Integer)
-    # plank = Column(Float)
-
 
 class NutritionSearchForm(FlaskForm):
     search = StringField('Search', validators=[DataRequired()])
@@ -144,7 +138,7 @@ class LoginForm(FlaskForm):
     username = StringField('Username/Email', 
                            validators=[DataRequired(), Length(min=2, max=20)])
     password = PasswordField('Password', validators=[DataRequired()])
-    remember = BooleanField('Remember me')
+    # remember = BooleanField('Remember me')
     submit = SubmitField('Log In')
         
 
@@ -251,7 +245,7 @@ def login():
             if(user.username == username or user.email == username):
                 if(user.password == password):
                     flash("Login successful!", "success")
-                    return redirect(url_for('home', title='Home'))
+                    return redirect(url_for('health', title='Home'))
                 else:
                     flash("Incorrect password")
                     return render_template('login.html', form=form, title="Login") 
@@ -260,6 +254,10 @@ def login():
 
         # return redirect(url_for('home'))
     return render_template("login.html", form=form, title='Login')
+
+@app.route("/health", methods=["GET", "POST"])
+def health():
+    return render_template("health.html")
 
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
