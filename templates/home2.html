@@ -40,6 +40,14 @@ background-image: linear-gradient(to right, rgb(188, 190, 209, 0.5), rgba(135, 1
     <form method="post">
         {{ form.hidden_tag() }}
         <fieldset>
+            <div class="row" style="margin-top: 10px; margin-bottom: 5px;">
+                <div class="col-lg-4">
+                    <label for="exercise-duration">{{ form.duration.label() }}</label>
+                </div>
+                <div class="col-lg-8">
+                    <div>{{ form.duration(placeholder='in minutes')}}</div>
+                </div>
+            </div>
         <div class="row" style="margin-top: 10px; margin-bottom: 5px;">
             <div class="col-lg-4">
             <label for="exercise-item-search">Filter Exercise</label>

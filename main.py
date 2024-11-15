@@ -31,6 +31,7 @@ data_food = json.load(jsonfile1)
 jsonfile2 = open('static/exercise.json', 'r')
 data_exercise = json.load(jsonfile2)
 
+data = {}
 
 from wtforms import SelectMultipleField, widgets
 from markupsafe import Markup
@@ -72,6 +73,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///tech-stack.db"
 DATABASE_URL = "sqlite:///health-tracker.db"
 
 class ExerciseForm(FlaskForm):
+    duration = IntegerField("Exercise Duration", validators=[DataRequired()])
     exercise_items = TextAreaField("exercise-items", validators=[DataRequired()])
     submit = SubmitField('Submit')
 
@@ -89,7 +91,6 @@ class Users(Base):
     username = Column(String, nullable=False)
     password = Column(String, nullable=False)
     email = Column(String, nullable=False)
-    health_score = Column(Integer)
     bmi = Column(Float)
     weight = Column(Float)
     height = Column(Float)
@@ -115,9 +116,18 @@ class Exercise(Base):
     __tablename__ = 'exercise'
     id = Column(Integer, primary_key=True)
     username = Column(String, ForeignKey("users.username"))
-    day = Column(Integer)
+    day = Column(Date)
     burnt_calories = Column(Float)
+    exercise_names = Column(String)
+    duration = Column(Integer)
     # tasks = relationship("Exercise", back_populates="users")
+
+class Health(Base):
+    __tablename__ = 'health'
+    id = Column(Integer, primary_key=True)
+    username = Column(String, ForeignKey("users.username"))
+    day = Column(Date)
+    health_score = Column(Integer)
 
 class NutritionSearchForm(FlaskForm):
     search = StringField('Search', validators=[DataRequired()])
@@ -150,7 +160,44 @@ class LoginForm(FlaskForm):
     # remember = BooleanField('Remember me')
     submit = SubmitField('Log In')
         
+###########################
+# ** HELPER FUNCTIONS **  #
+###########################
+def update_health(username, day, is_nutrition_changed, is_exercise_changed):
+    # nutrition score calculation
+    nutrition_score = 0
+    if is_nutrition_changed:
+        nutrition_data = db_session.query(Nutrition).filter_by(username=username, day=day).first()
+        nutrition_score = 0.25*nutrition_data.protein + 0.1*nutrition_data.calories + 0.15*nutrition_data.fat + 0.1*nutrition_data.Sat_fat + 0.2*nutrition_data.carbs + 0.2*nutrition_data.fiber
 
+    # exercise score calculation
+    exercise_score = 0
+    if is_exercise_changed:
+        exercise_data = db_session.query(Exercise).filter_by(username=username, day=day).first()
+        exercise_score = exercise_data.burnt_calories
+
+    # health score calculation
+    health_score = round(0.7*nutrition_score + 0.3*exercise_score,2)
+    
+    # commit health score
+    health_data = db_session.query(Health).filter_by(username=username, day=day).first()
+    
+    if (health_data):
+        health_score += health_data.health_score
+        db_session.query(Health).filter_by(username=username, day=day).update({"health_score":health_score})
+    else:
+        health_obj = Health(
+            username = username,
+            day = day,
+            health_score = health_score
+        )
+        db_session.add(health_obj)
+    
+    db_session.commit()
+
+###########################
+# ** ROUTES **            #
+###########################
 @app.route('/home', methods=["GET", "POST"])
 def home():
     __food_items = []
@@ -207,21 +254,19 @@ def home():
                 fiber += nutrition_data.fiber
                 nutrition_data = db_session.query(Nutrition).filter_by(username=username, day=day).update({ "protein": protein, "calories" : calories, "fat": fat, "Sat_fat": Sat_fat, "carbs": carbs, "fiber": fiber})
                 db_session.commit()
+                update_health(username, day, is_nutrition_changed=True, is_exercise_changed=False)
+
+                # db_session.query(Users).filter_by(username=username)
+                # db_session.commit()
                 nutrition_data = db_session.query(Nutrition).filter_by(username=username, day=day).first()
-                nutrtion_score = 0.25*nutrition_data.protein + 0.1*nutrition_data.calories + 0.15*nutrition_data.fat + 0.1*nutrition_data.Sat_fat + 0.2*nutrition_data.carbs + 0.2*nutrition_data.fiber
-                exercise_data = db_session.query(Exercise).filter_by(username=username, day=day).first()
-                exercise_score = exercise_data.burnt_calories
-
-                health_score = 0.7*nutrtion_score + 0.3*exercise_score
-
-                db_session.query(Users).filter_by(username=username).update({"health_score":health_score})
-                db_session.commit()
+                health_data = db_session.query(Health).filter_by(username=username, day=day).first()
                 user_data = {
                         "user": user, 
                         "nutrition_data":nutrition_data, 
-                        "exercise_data":exercise_data
+                        "exercise_data":exercise_data,
+                        "health_data": health_data
                     }
-                return render_template('health.html', title='Health', user_data=user_data)
+                return redirect(url_for('health', title='Health'))
                 
             else:
                 nutrition_obj = Nutrition(
@@ -237,12 +282,16 @@ def home():
 
                 db_session.add(nutrition_obj)
                 db_session.commit()
+                update_health(username, day, is_nutrition_changed=True, is_exercise_changed=False)
+                nutrition_data = db_session.query(Nutrition).filter_by(username=username, day=day).first()
+                health_data = db_session.query(Health).filter_by(username=username, day=day).first()
                 user_data = {
                         "user": user, 
                         "nutrition_data":nutrition_data, 
-                        "exercise_data":exercise_data
+                        "exercise_data":exercise_data,
+                        "health_data": health_data
                     }
-                return render_template('health.html', title='Health', user_data=user_data)
+                return redirect(url_for('health', title='Health'))
 
     return render_template("home.html", title="Home", form=form, data=__food_items)
 
@@ -269,51 +318,63 @@ def home2():
                 # flash(f'Selcected Exercise Items: {", ".join(form.exercise_items.data)}', 'success')
                 print(form.exercise_items)
                 burnt_calories = 0
+                exercise_names = ""
                 for i in form.exercise_items.data.split('; '):
                     _i = i.split('(x')[0]
                     exercise = data_exercise['Exercise Values'][_exercises_dict[_i]]
                     burnt_calories = float(weight)*float(exercise["Calories per kg"])
+                    exercise_names += _i +"; "
                 
                 day = date.today()
                 user = db_session.query(Users).filter_by(username=username).first()
                 exercise_data = db_session.query(Exercise).filter_by(username=username, day=day).first()
+                nutrition_data = db_session.query(Nutrition).filter_by(username=username, day=day).first()
+                duration = form.duration.data
+                
+
                 if(exercise_data):
                     burnt_calories += exercise_data.burnt_calories
-                    exercise_data = db_session.query(Exercise).filter_by(username=username, day=day).update({"burnt_calories": burnt_calories})
+                    exercise_names += exercise_data.exercise_names
+                    duration += exercise_data.duration
+                    exercise_data = db_session.query(Exercise).filter_by(username=username, day=day).update({"burnt_calories": burnt_calories, "exercise_names": exercise_names, "duration": duration})
                     print(exercise_data)
+
+                    
                     db_session.commit()
-                    nutrition_data = db_session.query(Nutrition).filter_by(username=username, day=day).first()
-                    nutrtion_score = 0.25*nutrition_data.protein + 0.1*nutrition_data.calories + 0.15*nutrition_data.fat + 0.1*nutrition_data.Sat_fat + 0.2*nutrition_data.carbs + 0.2*nutrition_data.fiber
+
+                    update_health(username, day, is_nutrition_changed=False, is_exercise_changed=True)
                     exercise_data = db_session.query(Exercise).filter_by(username=username, day=day).first()
-                    exercise_score = exercise_data.burnt_calories
-
-                    health_score = 0.7*nutrtion_score + 0.3*exercise_score
-
-                    db_session.query(Users).filter_by(username=username).update({"health_score":health_score})
-                    db_session.commit()
+                    health_data = db_session.query(Health).filter_by(username=username, day=day).first()
                     user_data = {
                             "user": user, 
                             "nutrition_data":nutrition_data, 
-                            "exercise_data":exercise_data
+                            "exercise_data":exercise_data,
+                            "health_data": health_data
                         }
-                    return render_template('health.html', title='Health', user_data=user_data)
+                    return redirect(url_for('health', title='Health'))
                     
                 else:
                     exercise_obj = Exercise(
                         username = username,
                         day = day,
                         burnt_calories = burnt_calories,
+                        duration = duration,
+                        exercise_names = exercise_names
                     )
+                    
                     print(exercise_obj)
                     db_session.add(exercise_obj)
                     db_session.commit()
-                    nutrition_data = db_session.query(Nutrition).filter_by(username=username, day=day).first()
+                    update_health(username, day, is_nutrition_changed=False, is_exercise_changed=True)
+                    exercise_data = db_session.query(Exercise).filter_by(username=username, day=day).first()
+                    health_data = db_session.query(Health).filter_by(username=username, day=day).first()
                     user_data = {
                             "user": user, 
                             "nutrition_data":nutrition_data, 
-                            "exercise_data":exercise_data
+                            "exercise_data":exercise_data,
+                            "health_data": health_data
                     }
-                    return render_template('health.html', title='Health', user_data=user_data)
+                    return redirect(url_for('health', title='Health'))
     return render_template("home2.html", title="Home", form=form, data=__exercises_items)
 
 
@@ -328,7 +389,7 @@ def login():
         username = form.username.data
         password = form.password.data
 
-        users = db_session.query(Users.username, Users.password, Users.email, Users.id, Users.bmi, Users.health_score, Users.height, Users.weight)
+        users = db_session.query(Users.username, Users.password, Users.email, Users.id, Users.bmi,  Users.height, Users.weight)
         
         for user in users:
             if(user.username == username or user.email == username):
@@ -338,24 +399,27 @@ def login():
                     # print(session['username'])
                     day = date.today()
                     nutrition_data = db_session.query(Nutrition).filter_by(username=username, day=day).first()
-                    nutrtion_score = 0.25*nutrition_data.protein + 0.1*nutrition_data.calories + 0.15*nutrition_data.fat + 0.1*nutrition_data.Sat_fat + 0.2*nutrition_data.carbs + 0.2*nutrition_data.fiber
+                    # nutrtion_score = 0.25*nutrition_data.protein + 0.1*nutrition_data.calories + 0.15*nutrition_data.fat + 0.1*nutrition_data.Sat_fat + 0.2*nutrition_data.carbs + 0.2*nutrition_data.fiber
                     exercise_data = db_session.query(Exercise).filter_by(username=username, day=day).first()
-                    exercise_score = exercise_data.burnt_calories
+                    health_data = db_session.query(Health).filter_by(username=username, day=day).first()
+                    # exercise_score = exercise_data.burnt_calories
 
-                    health_score = 0.7*nutrtion_score + 0.3*exercise_score
-
-                    db_session.query(Users).filter_by(username=username).update({"health_score":health_score})
+                    # health_score = 0.7*nutrtion_score + 0.3*exercise_score
+                    # db_session.query(Users).filter_by(username=username).update({"health_score":health_score})
 
                     # user = db_session.query(Users.username, Users.password, Users.email, Users.id, Users.bmi, Users.health_score, Users.height, Users.weight).filter_by(username=username).first()
                     # print(user)
                     print(user.bmi)
-                    print(user.health_score)
+                    # print(user.health_score)
                     user_data = {
                         "user": user, 
                         "nutrition_data":nutrition_data, 
-                        "exercise_data":exercise_data
+                        "exercise_data":exercise_data,
+                        "health_data": health_data
                     }
-                    return render_template('health.html', title='Health', user_data=user_data)
+                    global data
+                    data = user_data
+                    return redirect(url_for('health', title='Health'))
                 else:
                     flash("Incorrect password")
                     return render_template('login.html', form=form, title="Login") 
@@ -365,8 +429,23 @@ def login():
         # return redirect(url_for('home'))
     return render_template("login.html", form=form, title='Login')
 
-@app.route("/health/<user_data>", methods=["GET", "POST"])
-def health(user_data):
+@app.route("/health", methods=["GET"])
+def health():
+    # print(type(data))
+    # db_session.query()
+    username = session['username']
+    day = date.today()
+    user = db_session.query(Users).filter_by(username=username).first()
+    nutrition_data = db_session.query(Nutrition).filter_by(username=username, day=day).first()
+    exercise_data = db_session.query(Exercise).filter_by(username=username, day=day).first()
+    health_data = db_session.query(Health).filter_by(username=username, day=day).first()
+                    
+    user_data = {
+        "user": user, 
+        "nutrition_data":nutrition_data, 
+        "exercise_data":exercise_data,
+        "health_data": health_data
+    }
     return render_template("health.html", user_data=user_data)
 
 @app.route("/signup", methods=["GET", "POST"])
@@ -390,13 +469,16 @@ def signup():
                 # flash("User already exists!!! Try different username")
                 return render_template("signup.html", title="Signup")
 
-        new_user = Users(username=username, password=password, email=email, bmi=round((weight*weight)/height,2), health_score=0, height=height, weight=weight)
+        new_user = Users(username=username, password=password, email=email, bmi=round((weight*weight)/height,2), height=height, weight=weight)
         db_session.add(new_user)
         db_session.commit()
         new_user = Nutrition(username=username, day=date.today(), protein=0, calories=0, fat=0, Sat_fat=0, carbs=0, fiber=0)
         db_session.add(new_user)
         db_session.commit()
-        new_user = Exercise(username=username, day=date.today(), burnt_calories=0)
+        new_user = Exercise(username=username, day=date.today(), burnt_calories=0, exercise_names='', duration = 0)
+        db_session.add(new_user)
+        db_session.commit()
+        new_user = Health(username=username, day=date.today(), health_score=0)
         db_session.add(new_user)
         db_session.commit()
         print(users)
