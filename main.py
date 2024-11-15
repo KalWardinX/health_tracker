@@ -31,7 +31,6 @@ data_food = json.load(jsonfile1)
 jsonfile2 = open('static/exercise.json', 'r')
 data_exercise = json.load(jsonfile2)
 
-data = {}
 
 from wtforms import SelectMultipleField, widgets
 from markupsafe import Markup
@@ -77,6 +76,11 @@ class ExerciseForm(FlaskForm):
     exercise_items = TextAreaField("exercise-items", validators=[DataRequired()])
     submit = SubmitField('Submit')
 
+
+class HeightWeightForm(FlaskForm):
+    height = FloatField('Height')
+    weight = FloatField('Weight')
+    submit = SubmitField('Update')
 
 class Base(DeclarativeBase):
     pass
@@ -163,6 +167,8 @@ class LoginForm(FlaskForm):
 ###########################
 # ** HELPER FUNCTIONS **  #
 ###########################
+
+# UPDATE Health Table
 def update_health(username, day, is_nutrition_changed, is_exercise_changed):
     # nutrition score calculation
     nutrition_score = 0
@@ -193,6 +199,38 @@ def update_health(username, day, is_nutrition_changed, is_exercise_changed):
         )
         db_session.add(health_obj)
     
+    db_session.commit()
+
+# GET LEADERBOARD data
+def get_top_10(day):
+    leaderboard = []
+    user_health_data = db_session.query(Health).filter_by(day=day).order_by(Health.health_score.desc()).limit(10).all()
+    for i in range(min(10, len(user_health_data))):
+        leaderboard.append({
+            'username': user_health_data[i].username,
+            'health_score': round(user_health_data[i].health_score, 2)
+        })
+    return leaderboard
+
+# GET EXERCISE Data
+def get_exercises(username, day):
+    exercises_list = []
+    exercises = db_session.query(Exercise).filter_by(username=username, day=day).first().exercise_names
+    
+    for exercise in exercises.split('; '):
+        if ( exercise != '' ):
+            exercises_list.append(exercise)
+
+    return exercises_list
+
+# UPDATE HEIGHT
+def update_height(username, height):
+    db_session.query(Users).filter_by(username = username).update({height: height})
+    db_session.commit()
+
+# UPDATE WEIGHT
+def update_weight(username, weight):
+    db_session.query(Users).filter_by(username = username).update({weight: weight})
     db_session.commit()
 
 ###########################
@@ -366,14 +404,6 @@ def home2():
                     db_session.add(exercise_obj)
                     db_session.commit()
                     update_health(username, day, is_nutrition_changed=False, is_exercise_changed=True)
-                    exercise_data = db_session.query(Exercise).filter_by(username=username, day=day).first()
-                    health_data = db_session.query(Health).filter_by(username=username, day=day).first()
-                    user_data = {
-                            "user": user, 
-                            "nutrition_data":nutrition_data, 
-                            "exercise_data":exercise_data,
-                            "health_data": health_data
-                    }
                     return redirect(url_for('health', title='Health'))
     return render_template("home2.html", title="Home", form=form, data=__exercises_items)
 
@@ -429,22 +459,24 @@ def login():
         # return redirect(url_for('home'))
     return render_template("login.html", form=form, title='Login')
 
-@app.route("/health", methods=["GET"])
+@app.route("/health", methods=["GET", "POST"])
 def health():
-    # print(type(data))
-    # db_session.query()
     username = session['username']
     day = date.today()
     user = db_session.query(Users).filter_by(username=username).first()
     nutrition_data = db_session.query(Nutrition).filter_by(username=username, day=day).first()
     exercise_data = db_session.query(Exercise).filter_by(username=username, day=day).first()
     health_data = db_session.query(Health).filter_by(username=username, day=day).first()
-                    
+
+    leaderboard = get_top_10(day)
+    exercises = get_exercises(username, day)    
     user_data = {
         "user": user, 
         "nutrition_data":nutrition_data, 
         "exercise_data":exercise_data,
-        "health_data": health_data
+        "health_data": health_data,
+        "leaderboard": leaderboard,
+        "exercises": exercises
     }
     return render_template("health.html", user_data=user_data)
 

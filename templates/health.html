@@ -61,11 +61,15 @@
     <div class="leaderboard">
         <div style="margin-top: 5px; font-size: larger;">Leaderboard</div>
             <ol style="margin-left: 13px;">
-                <li><div class="leaderboard-child">
-                    <span>User1</span> &nbsp; &nbsp; &nbsp; <span>Healthscore</span> 
-                </div>
-                </li>
+                {% for user in user_data['leaderboard'] %}
                 <li>
+                    <div class="leaderboard-child">
+                        <span>{{user['username']}}</span> &nbsp; &nbsp; &nbsp; <span>{{ user['health_score'] }}</span> 
+                    </div>
+                </li>
+                {% endfor %}
+                
+                <!-- <li>
                 <div class="leaderboard-child">
                     <span>User1</span> &nbsp; &nbsp; &nbsp; <span>Healthscore</span>
                 </div>
@@ -105,7 +109,7 @@
                 <div class="leaderboard-child">
                     <span>User1</span> &nbsp; &nbsp; &nbsp; <span>Healthscore</span>
                 </div>
-                </li>
+                </li> -->
             </ol>
     </div>
 </div>
@@ -148,11 +152,13 @@
             </div>
             <div style="padding: 0px 0px 0px 10px;">
             <ol style="margin-left: 10px;">
+                {% for exercise in user_data['exercises'] %}
                 <li><div class="leaderboard-child-1">
-                    <span>User1</span> <span>Healthscore</span>
+                    <span>{{ exercise }}</span>
                 </div>
                 </li>
-                <li>
+                {% endfor %}
+                <!-- <li>
                 <div class="leaderboard-child-1">
                     <span>User1</span> <span>Healthscore</span>
                 </div>
@@ -183,7 +189,7 @@
                 <div class="leaderboard-child-1">
                     <span>User1</span> <span>Healthscore</span>
                 </div>
-                </li>
+                </li> -->
             </ol>
             </div>
         </div>
