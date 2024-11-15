@@ -225,12 +225,20 @@ def get_exercises(username, day):
 
 # UPDATE HEIGHT
 def update_height(username, height):
-    db_session.query(Users).filter_by(username = username).update({height: height})
+    db_session.query(Users).filter_by(username = username).update({'height': height})
     db_session.commit()
 
 # UPDATE WEIGHT
 def update_weight(username, weight):
-    db_session.query(Users).filter_by(username = username).update({weight: weight})
+    db_session.query(Users).filter_by(username = username).update({'weight': weight})
+    db_session.commit()
+
+# UPDATE BMI
+def update_bmi(username):
+    height = db_session.query(Users).filter_by(username = username).first().height
+    weight = db_session.query(Users).filter_by(username = username).first().weight
+    bmi = round((weight**2)/height, 2)
+    db_session.query(Users).filter_by(username = username).update({'bmi': bmi})
     db_session.commit()
 
 ###########################
@@ -304,7 +312,7 @@ def home():
                         "exercise_data":exercise_data,
                         "health_data": health_data
                     }
-                return redirect(url_for('health', title='Health'))
+                redirect(url_for('health'))
                 
             else:
                 nutrition_obj = Nutrition(
@@ -329,7 +337,7 @@ def home():
                         "exercise_data":exercise_data,
                         "health_data": health_data
                     }
-                return redirect(url_for('health', title='Health'))
+                redirect(url_for('health'))
 
     return render_template("home.html", title="Home", form=form, data=__food_items)
 
@@ -389,7 +397,7 @@ def home2():
                             "exercise_data":exercise_data,
                             "health_data": health_data
                         }
-                    return redirect(url_for('health', title='Health'))
+                    redirect(url_for('health'))
                     
                 else:
                     exercise_obj = Exercise(
@@ -404,7 +412,7 @@ def home2():
                     db_session.add(exercise_obj)
                     db_session.commit()
                     update_health(username, day, is_nutrition_changed=False, is_exercise_changed=True)
-                    return redirect(url_for('health', title='Health'))
+                    redirect(url_for('health'))
     return render_template("home2.html", title="Home", form=form, data=__exercises_items)
 
 
@@ -426,30 +434,7 @@ def login():
                 if(user.password == password):
                     # flash("Login successful!", "success") 
                     session['username'] = username
-                    # print(session['username'])
-                    day = date.today()
-                    nutrition_data = db_session.query(Nutrition).filter_by(username=username, day=day).first()
-                    # nutrtion_score = 0.25*nutrition_data.protein + 0.1*nutrition_data.calories + 0.15*nutrition_data.fat + 0.1*nutrition_data.Sat_fat + 0.2*nutrition_data.carbs + 0.2*nutrition_data.fiber
-                    exercise_data = db_session.query(Exercise).filter_by(username=username, day=day).first()
-                    health_data = db_session.query(Health).filter_by(username=username, day=day).first()
-                    # exercise_score = exercise_data.burnt_calories
-
-                    # health_score = 0.7*nutrtion_score + 0.3*exercise_score
-                    # db_session.query(Users).filter_by(username=username).update({"health_score":health_score})
-
-                    # user = db_session.query(Users.username, Users.password, Users.email, Users.id, Users.bmi, Users.health_score, Users.height, Users.weight).filter_by(username=username).first()
-                    # print(user)
-                    print(user.bmi)
-                    # print(user.health_score)
-                    user_data = {
-                        "user": user, 
-                        "nutrition_data":nutrition_data, 
-                        "exercise_data":exercise_data,
-                        "health_data": health_data
-                    }
-                    global data
-                    data = user_data
-                    return redirect(url_for('health', title='Health'))
+                    redirect(url_for('health'))
                 else:
                     flash("Incorrect password")
                     return render_template('login.html', form=form, title="Login") 
@@ -461,8 +446,21 @@ def login():
 
 @app.route("/health", methods=["GET", "POST"])
 def health():
+    form = HeightWeightForm()
+    
     username = session['username']
     day = date.today()
+
+    if request.method == 'POST':
+        if form.height.data:
+            update_height(username, form.height.data)
+            update_bmi(username)
+        if form.weight.data:
+            update_weight(username, form.weight.data)
+            update_bmi(username)
+            
+        return redirect(url_for('health'))
+
     user = db_session.query(Users).filter_by(username=username).first()
     nutrition_data = db_session.query(Nutrition).filter_by(username=username, day=day).first()
     exercise_data = db_session.query(Exercise).filter_by(username=username, day=day).first()
@@ -475,10 +473,9 @@ def health():
         "nutrition_data":nutrition_data, 
         "exercise_data":exercise_data,
         "health_data": health_data,
-        "leaderboard": leaderboard,
         "exercises": exercises
     }
-    return render_template("health.html", user_data=user_data)
+    return render_template("health.html", user_data=user_data, form = form, leaderboard=leaderboard)
 
 @app.route("/signup", methods=["GET", "POST"])
 def signup():

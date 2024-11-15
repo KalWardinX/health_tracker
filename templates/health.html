@@ -49,19 +49,50 @@
     </div>
     <div class="add-data">
     
-        <div style="margin-top: 100px; font-size: 3cap; font-family: 'Courier New', Courier, monospace;">Add today's data</div>
+        <div style="margin-top: 10px; font-size: 3cap; font-family: 'Courier New', Courier, monospace;">Add today's data</div>
         
-        <a href="{{ url_for('home') }}" class="nutrition  btn btn-outline-success btn-block">
-            Nutrition
-        </a>
-        <a href="{{ url_for('home2') }}" class="exercise  btn btn-outline-success btn-block">
-                Exercise 
-        </a>
+        <div class="exer_nutr">
+            <a href="{{ url_for('home') }}" class="nutrition  btn btn-outline-success btn-block">
+                Nutrition
+            </a>
+            <div class="ht_wt">
+                <form method="post">
+                    {{ form.hidden_tag() }}
+                    <legend>Update Height or Weight</legend>
+                    <fieldset>
+                        <div class="row" style="margin-top: 10px; margin-bottom: 5px;">
+                            <div class="col-lg-6">
+                                <label for="exercise-duration">{{ form.height.label() }}</label>
+                            </div>
+                            <div class="col-lg-2">{{ form.height(placeholder='in cm', style="width:150px")}}</div>
+                            
+                        </div>
+        
+                        
+                        <div class="row" style="margin-top: 10px; margin-bottom: 5px;">
+                            <div class="col-lg-6">
+                                <label for="exercise-duration">{{ form.weight.label() }}</label>
+                            </div>
+                            <div class="col-lg-2">{{ form.weight(placeholder='in kg', style="width:150px")}}</div>
+                            
+                        </div>
+                        <div style="justify-content: center;">{{ form.submit()}}</div>
+                    </fieldset>
+                </form>
+            </div>
+            <a href="{{ url_for('home2') }}" class="exercise  btn btn-outline-success btn-block">
+                    Exercise 
+            </a>
+        </div>
+
+
+        
+        
     </div>
     <div class="leaderboard">
         <div style="margin-top: 5px; font-size: larger;">Leaderboard</div>
             <ol style="margin-left: 13px;">
-                {% for user in user_data['leaderboard'] %}
+                {% for user in leaderboard %}
                 <li>
                     <div class="leaderboard-child">
                         <span>{{user['username']}}</span> &nbsp; &nbsp; &nbsp; <span>{{ user['health_score'] }}</span> 
