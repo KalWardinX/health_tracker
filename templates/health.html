@@ -29,112 +29,125 @@
 <div class="box1 card">
     <div class="bmi">
         <div class="card bmi-child">
-            <div class="card-body "> BMI </div>
+            <div class="card-body " style="font-size: 4cap;"> BMI </div>
+            <div class="card-body" style="font-size: 2.5cap; font-style: normal; font-family: Arial, Helvetica, sans-serif;"> {{ user_data["user"].bmi }} </div>
         </div>
         <div class="card bmi-child">
-            <div class="card-body"> Height </div>
+            <div class="card-body" style="font-size: 4cap;"> Height </div>
+            <div class="card-body" style="font-size: 2.5cap;"> {{ user_data["user"].height }} cm</div>
         </div>
     </div>
     <div class="bmi">
         <div class="card bmi-child">
-            <div class="card-body"> Weight </div>
+            <div class="card-body" style="font-size: 4cap;"> Weight </div>
+            <div class="card-body" style="font-size: 2.5cap;"> {{ user_data["user"].weight }} kg</div>
         </div>
         <div class="card bmi-child">
-            <div class="card-body">Health Score</div>
+            <div class="card-body" style="font-size: 4cap;">Health Score</div>
+            <div class="card-body" style="font-size: 2.5cap;">{{ user_data["user"].health_score }}</div>
         </div>
     </div>
     <div class="add-data">
-        <div style="padding-top: 20px ;">Add today's data</div>
-        <div class="exercise  btn btn-outline-success btn-block">
-                Exercise 
-        </div>
-        <div class="nutrition  btn btn-outline-success btn-block">
+    
+        <div style="margin-top: 100px; font-size: 3cap; font-family: 'Courier New', Courier, monospace;">Add today's data</div>
+        
+        <a href="{{ url_for('home') }}" class="nutrition  btn btn-outline-success btn-block">
             Nutrition
-        </div>
+        </a>
+        <a href="{{ url_for('home2') }}" class="exercise  btn btn-outline-success btn-block">
+                Exercise 
+        </a>
     </div>
     <div class="leaderboard">
-        <div style="margin-top: 5px;">Leaderboard</div>
-            <ol>
+        <div style="margin-top: 5px; font-size: larger;">Leaderboard</div>
+            <ol style="margin-left: 13px;">
                 <li><div class="leaderboard-child">
-                    <span>User1</span> <span>Healthscore</span> 
+                    <span>User1</span> &nbsp; &nbsp; &nbsp; <span>Healthscore</span> 
                 </div>
                 </li>
                 <li>
                 <div class="leaderboard-child">
-                    <span>User1</span> <span>Healthscore</span>
+                    <span>User1</span> &nbsp; &nbsp; &nbsp; <span>Healthscore</span>
                 </div>
                 </li>
                 <li><div class="leaderboard-child">
-                    <span>User1</span> <span>Healthscore</span>
+                    <span>User1</span> &nbsp; &nbsp; &nbsp; <span>Healthscore</span>
                 </div>
                 </li>
                 <li>
                 <div class="leaderboard-child">
-                    <span>User1</span> <span>Healthscore</span>
+                    <span>User1</span> &nbsp; &nbsp; &nbsp; <span>Healthscore</span>
                 </div>
                 </li>
                 <li><div class="leaderboard-child">
-                    <span>User1</span> <span>Healthscore</span> 
+                    <span>User1</span> &nbsp; &nbsp; &nbsp; <span>Healthscore</span> 
                 </div>
                 </li>
                 <li>
                 <div class="leaderboard-child">
-                    <span>User1</span> <span>Healthscore</span>
+                    <span>User1</span> &nbsp; &nbsp; &nbsp; <span>Healthscore</span>
                 </div>
                 </li>
                 <li><div class="leaderboard-child">
-                    <span>User1</span> <span>Healthscore</span>
+                    <span>User1</span> &nbsp; &nbsp; &nbsp; <span>Healthscore</span>
                 </div>
                 </li>
                 <li>
                 <div class="leaderboard-child">
-                    <span>User1</span> <span>Healthscore</span>
+                    <span>User1</span> &nbsp; &nbsp; &nbsp; <span>Healthscore</span>
                 </div>
                 </li>
                 <li><div class="leaderboard-child">
-                    <span>User1</span> <span>Healthscore</span>
+                    <span>User1</span> &nbsp; &nbsp; &nbsp; <span>Healthscore</span>
                 </div>
                 </li>
                 <li>
                 <div class="leaderboard-child">
-                    <span>User1</span> <span>Healthscore</span>
+                    <span>User1</span> &nbsp; &nbsp; &nbsp; <span>Healthscore</span>
                 </div>
                 </li>
             </ol>
     </div>
 </div>
 <div class="today-data">
-    <div style="text-align: center; margin-top: auto; margin-bottom: auto; margin-left: 20px; margin-right: 20px; font-size: 2cap;">
+    <div class="bmi">
+        <div class="card bmi-child" style="background-image: linear-gradient(rgb(216, 214, 184, 0.6), rgb(96, 164, 163, 0.5)); font-family: 'Times New Roman', Times, serif;">
+            <div class="card-body" style="font-size: 4cap;"> Protein </div>
+            <div class="card-body" style="font-size: 2.5cap;"> {{ user_data["nutrition_data"].protein }} gm</div>
+        </div>
+        <div class="card bmi-child" style="background-image: linear-gradient(rgb(216, 214, 184, 0.6), rgb(96, 164, 163, 0.5)); font-family: 'Times New Roman', Times, serif;">
+            <div class="card-body" style="font-size: 4cap;">Calorie intake</div>
+            <div class="card-body" style="font-size: 2.5cap;"> {{ user_data["nutrition_data"].calories }} kcal</div>
+        </div>
+    </div>
+    <div>
+    <div style="text-align: center; margin-top: 70px; margin-left: 20px; margin-right: 20px; font-size: 4cap;">
         Today's activity
     </div>
-    <div class="bmi">
-        <div class="card bmi-child">
-            <div class="card-body"> Protein </div>
-        </div>
-        <div class="card bmi-child">
-            <div class="card-body">Calories intake</div>
-        </div>
-    </div>
+    <div style="display: flex; flex-direction: row; margin-top: 150px; margin-bottom: 10px;">
     <div class="today-data-child">
-        <div class="today-data-child-1"> Fat </div>
-        <div class="today-data-child-1"> sat_fat </div>
-        <div class="today-data-child-1"> carbs </div>
-        <div class="today-data-child-1"> fiber </div>
+        <div class="today-data-child-1"> Fat &nbsp; &nbsp;&nbsp; &nbsp;{{ user_data["nutrition_data"].fat }}</div>
+        <div class="today-data-child-1"> sat_fat &nbsp; &nbsp; &nbsp;{{ user_data["nutrition_data"].Sat_fat }}</div>
+        <div class="today-data-child-1"> carbs &nbsp; &nbsp; &nbsp;{{ user_data["nutrition_data"].carbs }}</div>
+        <div class="today-data-child-1"> fiber &nbsp; &nbsp; &nbsp;{{ user_data["nutrition_data"].fiber }}</div>
     </div>
         <div class="today-data-child" style="text-align: center;"> 
-            <div style="margin-top: 20px; font-size: 2.5cap;">
+            <div style="margin-top: 50px; font-size: 3cap;">
                 Calories Burnt
             </div>
-            <div style="margin-top: 60px; font-size:5cap; font-family: 'Times New Roman', Times, serif;">
-                xyz kcal
+            <div style="margin-top: 60px; font-size:2.5cap; font-family: 'Times New Roman', Times, serif;">
+                {{ user_data["exercise_data"].burnt_calories }} <br>
+                kcal
             </div> 
         </div>
+    </div>
+    </div>
         <div class="today-data-child-2" style="text-align: center;"> 
             <div style="margin-top: 20px; font-size: 2.5cap;">
                 Exercises
             </div>
             <div style="padding: 0px 0px 0px 10px;">
-            <ol>
+            <ol style="margin-left: 10px;">
                 <li><div class="leaderboard-child-1">
                     <span>User1</span> <span>Healthscore</span>
                 </div>

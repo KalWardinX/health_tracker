@@ -74,11 +74,12 @@
     margin-left: 20px;
     margin-right: 20px; 
     margin-top: 20px;
-    /* background-color: black; */
+    border-radius: 20px;
     font-size: large;
     font-family: 'Courier New', Courier, monospace;
     font-weight: 700;
     justify-content: space-between;
+    background-image: linear-gradient(to right, rgb(109, 121, 227), rgb(135, 153, 206));
 }
 
 .bmi{
@@ -86,67 +87,85 @@
     flex-direction: column;
     text-align: center;
     padding: 20px 10px 20px 10px;
+    /* background-image: rgb(112, 136, 209); */
+    margin: 10px 10px 10px 10px;
+
 }
 
 .bmi-child{
-    background-image: linear-gradient(rgb(216, 214, 184), rgb(178, 236, 151));
-    /* background-image: url('./static/images/home3.jpg'); */
-    /* background-image: url('./static/images/logo.png');
-    background-repeat: no-repeat;
-    background-size: cover; */
+    background-image: linear-gradient(to right, rgb(212, 213, 225), rgb(160, 174, 218));
     height: 300px;
     width: 300px;
     margin-top: 10px;
     border-radius: 10px;
     padding: 10px 10px 10px 10px;
+    border: none;
+    /* font-family: 'Times New Roman', Times, serif; */
+    font-family: cursive;
 }
 
 .add-data{
-    background-image: linear-gradient(rgb(216, 214, 184), rgb(178, 236, 151));
+    background-image: linear-gradient(to right, rgb(212, 213, 225), rgb(160, 174, 218));
     margin-left: 50px;
-    margin-top: 20px;
+    /* margin-top: 20px; */
     background-color: azure;
     display: flex;
     flex-direction: column;
     text-align: center;
     justify-content: center;
     width: 30%;
+    border-radius: 10px;
+    margin-top: 38px;
+    margin-bottom: 35px;
 }
 
 .exercise{
-    margin-top: 20px;
-    margin-bottom: 20px;
-    background-color: aqua;
+    margin-top: 0px;
+    background-color: rgb(195, 228, 228);
     border-radius: 10px;
     padding: 15px 0px 15px 0px;
+    width: 80%;
+    font-size: larger;
+    margin-left: auto;
+    margin-right: auto;
+    color: rgb(13, 18, 13);
 }
 
 .nutrition{
-    margin-top: 20px;
-    margin-bottom: 20px;
-    background-color: aqua;
+    margin-top: 30px;
+    font-size: larger;
+    color: rgb(13, 18, 13);
+    background-color: rgb(195, 228, 228);
     border-radius: 10px;
     padding: 15px 0px 15px 0px;
     margin-bottom: 200px;
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .leaderboard{
-    background-image: linear-gradient(rgb(216, 214, 184), rgb(178, 236, 151));
-    margin-left: 150px;
-    margin-top: 10px;
+    background-image: linear-gradient(to right, rgb(212, 213, 225), rgb(160, 174, 218));
+    margin-left: 70px;
+    margin-top: 38px;
+    margin-bottom: 35px;
+    border-radius: 10px;
     background-color: azure;
     display: flex;
     flex-direction: column;
     text-align: center;
-    margin-right: 10px;
+    margin-right: 25px;
     width: 30%;
 }
 
 .leaderboard-child{
-    margin-top: 5px;
-    background-color: #028333;
+    margin-top: 16px;
+    background-color: #ab90bd;
     margin-right: 10px;
-    padding: 5px 5px 5px 5px;
+    margin-left: 10px;
+    padding: 2px 2px 2px 2px;
+    font-size: larger;
+    border-radius: 10px;
 }
 
 .box2{
@@ -158,13 +177,16 @@
     background-image: linear-gradient(rgb(216, 214, 184), rgb(178, 236, 151));
     font-size: large;
     font-family: 'Courier New', Courier, monospace;
-    font-weight: 700;
+    font-weight: 300;
+    border-radius: 20px;
 }
 
 .calorie-burnt{
     margin-left: auto;
     margin-right: auto;
     background-color: aliceblue;
+    justify-content: center;
+    align-items: center;
 }
 
 .health-score{
@@ -177,7 +199,7 @@
     display: flex;
     /* justify-content: space-between; */
     flex-direction: row;
-    background-color: #0095f6;
+    background-image: linear-gradient(rgba(216, 214, 184, 0.3), rgb(96, 164, 163, 0.3));
     font-size: larger;
     font-family: 'Courier New', Courier, monospace;
     font-weight: 700;
@@ -187,7 +209,7 @@
 }
 
 .today-data-child{
-    background-color: beige;
+    background-image: linear-gradient(rgb(216, 214, 184, 0.6), rgb(96, 164, 163, 0.3));   
     margin-top: auto;
     margin-bottom: auto;
     margin-left: 40px;
@@ -197,6 +219,7 @@
     height: 350px;
     width: 350px;
     border-radius: 10px;
+    /* color: white; */
 }
 
 .today-data-child-1{
@@ -204,28 +227,32 @@
     width: 300px;
     margin-top: 20px;
     margin-bottom: 15px;
-    margin-left: auto;
-    margin-right: auto;
-    background-color: aqua;
+    margin-left: 20px;
+    margin-right: 40px;
+    background-image: linear-gradient(rgb(216, 214, 184, 0.6), rgb(96, 164, 163, 0.3));   
     border-radius: 15px;
     font-size: 2.5cap;
+    font-family: 'Times New Roman', Times, serif;
 }
 
 .today-data-child-2{
     padding: 10px 10px 10px 10px;
-    margin-top: 20px;
-    margin-bottom: 15px;
-    margin-left: auto;
-    margin-right: auto;
-    background-color: azure;
+    background-image: linear-gradient(rgb(216, 214, 184, 0.6), rgb(96, 164, 163, 0.3));    
+    margin-top: 35px;
+    margin-bottom: 35px;
+    margin-left: 110px;
+    margin-right: 20px;
     border-radius: 15px;
     font-size: 2.5cap;
+    width: 600px;
 }
 
 .leaderboard-child-1{
-    margin-top: 5px;
-    background-color: #028333;
+    margin-top: 15px;
+    background-color: #c296dd;
     margin-right: 10px;
+    font-size: 1.5cap;
     margin-top: 10px;
+    border-radius: 10px;
     padding: 10px 10px 10px 10px;
 }

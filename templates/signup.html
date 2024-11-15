@@ -10,7 +10,7 @@
     </div>
 </div>
 <div class="card" style="display: flex; justify-content: center; align-items: center; 
-                    margin-top: 50px; width:400px; height: 550px; margin-left: auto; margin-right: auto;
+                    margin-top: 50px; width:400px; height: 650px; margin-left: auto; margin-right: auto;
                     padding-top: 20px;
                     background-image: linear-gradient(to right, rgb(188, 190, 209), rgb(135, 153, 206));">
     <div class="card-body">
@@ -32,6 +32,14 @@
                 <div class="login-inputs">
                     {{ form.confirm_pass.label() }}
                     {{ form.confirm_pass(style="width:100%") }}
+                </div>
+                <div class="login-inputs">
+                    {{ form.height.label() }}
+                    {{ form.height(style="width:100%", placeholder="in cm") }}
+                </div>
+                <div class="login-inputs">
+                    {{ form.weight.label() }}
+                    {{ form.weight(style="width:100%", placeholder="in Kg") }}
                 </div>
             <div style="display: flex; justify-content: center; align-items: center; margin-top: 5px; margin-bottom: 10px;">
                 {{ form.submit(class="btn btn-outline-success btn-block s-btn") }}
