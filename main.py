@@ -13,7 +13,9 @@ from datetime import date
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
 from flask_login import LoginManager
+import matplotlib
 import matplotlib.pyplot as plt
+matplotlib.use('agg')
 import pandas as pd
 
 app = Flask(__name__)
@@ -132,7 +134,7 @@ class Health(Base):
     __tablename__ = 'health'
     id = Column(Integer, primary_key=True)
     username = Column(String, ForeignKey("users.username"))
-    day = Column(Date)
+    day = Column(String)
     health_score = Column(Integer)
 
 class NutritionSearchForm(FlaskForm):
@@ -267,18 +269,38 @@ def convert_to_df(data, tuple_length):
 # MAKE PLOTS AND SAVE THEM AS .png
 def make_plots(df, username, title):
     if(title == "Calories"):
-        plt.plot(df['Date'], df['Calories Burnt'], df['Calories Consumed'])
+        plt.bar(df['Date'], df['Calories Burnt'], df['Calories Consumed'])
     elif(title == "Nutrients"):
-        plt.plot(df['Date'], df['protein'])
+        plt.bar(df['Date'], df['protein'])
     else:
-        plt.plot(df['Date'], df['health_score'])
+        plt.bar(df['Date'], df['health_score'])
 
     plt.title(title)
     plt.xlabel('Date')
     plt.ylabel('Amount')
-    plt.savefig(f"{username}_{title}.png")
+    plt.savefig(f"static/images/{username}_{title}.png")
 
+def update_plots():
+    username = session['username']
+
+    health_score = db_session.query(Health.day, Health.health_score).filter_by(username=username).order_by(Health.day).all()
+    calorie_burnt = db_session.query(Exercise.day, Exercise.burnt_calories).filter_by(username=username).order_by(Exercise.day).all()
+    calorie_intake = db_session.query( Nutrition.day, Nutrition.calories).filter_by(username=username).order_by(Nutrition.day).all()
     
+    other_nutrients = db_session.query(Nutrition.day, Nutrition.protein, Nutrition.fat, Nutrition.Sat_fat, Nutrition.carbs, Nutrition.carbs).filter_by(username=username).order_by(Nutrition.day).all()
+    
+    health_score_df = convert_to_df(health_score, 2)
+    calorie_burnt_df = convert_to_df(calorie_burnt, 2)
+    calorie_intake_df = convert_to_df(calorie_intake, 2)
+    other_nutrients_df = convert_to_df(other_nutrients,5)
+    # print(health_score_df)
+    calorie_plot_df = pd.merge(calorie_burnt_df, calorie_intake_df, on='day')
+    calorie_plot_df = calorie_plot_df.rename(columns={'day': 'Date', 'burnt_calories': 'Calories Burnt', 'calories': 'Calories Consumed'})
+    other_nutrients_df = other_nutrients_df.rename(columns={'day':'Date'})
+    health_score_df = health_score_df.rename(columns={'day':'Date'})
+    make_plots(calorie_plot_df, username, "Calories")
+    make_plots(other_nutrients_df, username, "Nutrients")
+    make_plots(health_score_df, username, "Health")
 ###########################
 # ** ROUTES **            #
 ###########################
@@ -342,15 +364,16 @@ def home():
 
                 # db_session.query(Users).filter_by(username=username)
                 # db_session.commit()
-                nutrition_data = db_session.query(Nutrition).filter_by(username=username, day=day).first()
-                health_data = db_session.query(Health).filter_by(username=username, day=day).first()
-                user_data = {
-                        "user": user, 
-                        "nutrition_data":nutrition_data, 
-                        "exercise_data":exercise_data,
-                        "health_data": health_data
-                    }
-                redirect(url_for('health'))
+                # nutrition_data = db_session.query(Nutrition).filter_by(username=username, day=day).first()
+                # health_data = db_session.query(Health).filter_by(username=username, day=day).first()
+                # user_data = {
+                #         "user": user, 
+                #         "nutrition_data":nutrition_data, 
+                #         "exercise_data":exercise_data,
+                #         "health_data": health_data
+                #     }
+                update_plots()
+                return redirect(url_for('health'))
                 
             else:
                 nutrition_obj = Nutrition(
@@ -367,15 +390,16 @@ def home():
                 db_session.add(nutrition_obj)
                 db_session.commit()
                 update_health(username, day, is_nutrition_changed=True, is_exercise_changed=False)
-                nutrition_data = db_session.query(Nutrition).filter_by(username=username, day=day).first()
-                health_data = db_session.query(Health).filter_by(username=username, day=day).first()
-                user_data = {
-                        "user": user, 
-                        "nutrition_data":nutrition_data, 
-                        "exercise_data":exercise_data,
-                        "health_data": health_data
-                    }
-                redirect(url_for('health'))
+                # nutrition_data = db_session.query(Nutrition).filter_by(username=username, day=day).first()
+                # health_data = db_session.query(Health).filter_by(username=username, day=day).first()
+                # user_data = {
+                #         "user": user, 
+                #         "nutrition_data":nutrition_data, 
+                #         "exercise_data":exercise_data,
+                #         "health_data": health_data
+                #     }
+                update_plots()
+                return redirect(url_for('health'))
 
     return render_template("home.html", title="Home", form=form, data=__food_items)
 
@@ -427,15 +451,16 @@ def home2():
                     db_session.commit()
 
                     update_health(username, day, is_nutrition_changed=False, is_exercise_changed=True)
-                    exercise_data = db_session.query(Exercise).filter_by(username=username, day=day).first()
-                    health_data = db_session.query(Health).filter_by(username=username, day=day).first()
-                    user_data = {
-                            "user": user, 
-                            "nutrition_data":nutrition_data, 
-                            "exercise_data":exercise_data,
-                            "health_data": health_data
-                        }
-                    redirect(url_for('health'))
+                    # exercise_data = db_session.query(Exercise).filter_by(username=username, day=day).first()
+                    # health_data = db_session.query(Health).filter_by(username=username, day=day).first()
+                    # user_data = {
+                    #         "user": user, 
+                    #         "nutrition_data":nutrition_data, 
+                    #         "exercise_data":exercise_data,
+                    #         "health_data": health_data
+                    #     }
+                    update_plots()
+                    return redirect(url_for('health'))
                     
                 else:
                     exercise_obj = Exercise(
@@ -450,7 +475,8 @@ def home2():
                     db_session.add(exercise_obj)
                     db_session.commit()
                     update_health(username, day, is_nutrition_changed=False, is_exercise_changed=True)
-                    redirect(url_for('health'))
+                    update_plots()
+                    return redirect(url_for('health'))
     return render_template("home2.html", title="Home", form=form, data=__exercises_items)
 
 
@@ -508,33 +534,19 @@ def health():
 
     leaderboard = get_top_10(day)
     exercises = get_exercises(username, day)    
+    
+    update_plots()
+    
     user_data = {
         "user": user, 
         "nutrition_data":nutrition_data, 
         "exercise_data":exercise_data,
         "health_data": health_data,
-        "exercises": exercises
+        "exercises": exercises,
+        "calories_png": f'static/images/{username}_Calories.png',
+        "nutrients_png": f'static/images/{username}_Nutrients.png',
+        "health_png": f'static//images/{username}_Health.png'
     }
-
-    health_score = db_session.query(Health.day, Health.health_score).filter_by(username=username).order_by(Health.day).all()
-    calorie_burnt = db_session.query(Exercise.day, Exercise.burnt_calories).filter_by(username=username).order_by(Exercise.day).all()
-    calorie_intake = db_session.query( Nutrition.day, Nutrition.calories).filter_by(username=username).order_by(Nutrition.day).all()
-    
-    other_nutrients = db_session.query(Nutrition.day, Nutrition.protein, Nutrition.fat, Nutrition.Sat_fat, Nutrition.carbs, Nutrition.carbs).filter_by(username=username).order_by(Nutrition.day).all()
-    
-    health_score_df = convert_to_df(health_score, 2)
-    calorie_burnt_df = convert_to_df(calorie_burnt, 2)
-    calorie_intake_df = convert_to_df(calorie_intake, 2)
-    other_nutrients_df = convert_to_df(other_nutrients,5)
-
-    calorie_plot_df = pd.merge(calorie_burnt_df, calorie_intake_df, on='day')
-    calorie_plot_df = calorie_plot_df.rename(columns={'day': 'Date', 'burnt_calories': 'Calories Burnt', 'calories': 'Calories Consumed'})
-    other_nutrients_df = other_nutrients_df.rename(columns={'day':'Date'})
-    health_score_df = health_score_df.rename(columns={'day':'Date'})
-    make_plots(calorie_plot_df, username, "Calories")
-    make_plots(other_nutrients_df, username, "Nutrients")
-    # make_plots(health_score_df, username, "Health Score")
-    
     return render_template("health.html", user_data=user_data, form = form, leaderboard=leaderboard)
 
 @app.route("/signup", methods=["GET", "POST"])
