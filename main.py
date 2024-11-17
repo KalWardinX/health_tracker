@@ -13,6 +13,8 @@ from datetime import date
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
 from flask_login import LoginManager
+import matplotlib.pyplot as plt
+import pandas as pd
 
 app = Flask(__name__)
 
@@ -120,7 +122,7 @@ class Exercise(Base):
     __tablename__ = 'exercise'
     id = Column(Integer, primary_key=True)
     username = Column(String, ForeignKey("users.username"))
-    day = Column(Date)
+    day = Column(String)
     burnt_calories = Column(Float)
     exercise_names = Column(String)
     duration = Column(Integer)
@@ -215,11 +217,16 @@ def get_top_10(day):
 # GET EXERCISE Data
 def get_exercises(username, day):
     exercises_list = []
-    exercises = db_session.query(Exercise).filter_by(username=username, day=day).first().exercise_names
-    
-    for exercise in exercises.split('; '):
-        if ( exercise != '' ):
-            exercises_list.append(exercise)
+    exercises = db_session.query(Exercise).filter_by(username=username, day=day).first()
+    if(exercises):
+        exercises = exercises.exercise_names
+        i = 0
+        for exercise in exercises.split('; '):
+            if(i==10):
+                break
+            if ( exercise != '' ):
+                exercises_list.append(exercise)
+                i+=1
 
     return exercises_list
 
@@ -241,6 +248,37 @@ def update_bmi(username):
     db_session.query(Users).filter_by(username = username).update({'bmi': bmi})
     db_session.commit()
 
+# CONVERT TO DF
+def convert_to_df(data, tuple_length):
+    
+    i = len(data)
+    array = []
+
+    for j in range(i):
+        temp = []
+        for y in range(tuple_length):
+            temp.append(data[j][y])
+        array.append(temp)
+
+    df = pd.DataFrame(data)
+
+    return df
+
+# MAKE PLOTS AND SAVE THEM AS .png
+def make_plots(df, username, title):
+    if(title == "Calories"):
+        plt.plot(df['Date'], df['Calories Burnt'], df['Calories Consumed'])
+    elif(title == "Nutrients"):
+        plt.plot(df['Date'], df['protein'])
+    else:
+        plt.plot(df['Date'], df['health_score'])
+
+    plt.title(title)
+    plt.xlabel('Date')
+    plt.ylabel('Amount')
+    plt.savefig(f"{username}_{title}.png")
+
+    
 ###########################
 # ** ROUTES **            #
 ###########################
@@ -434,7 +472,8 @@ def login():
                 if(user.password == password):
                     # flash("Login successful!", "success") 
                     session['username'] = username
-                    redirect(url_for('health'))
+                    print(username)
+                    return redirect(url_for('health'))
                 else:
                     flash("Incorrect password")
                     return render_template('login.html', form=form, title="Login") 
@@ -446,8 +485,9 @@ def login():
 
 @app.route("/health", methods=["GET", "POST"])
 def health():
+
+    print("in Health222")
     form = HeightWeightForm()
-    
     username = session['username']
     day = date.today()
 
@@ -475,6 +515,26 @@ def health():
         "health_data": health_data,
         "exercises": exercises
     }
+
+    health_score = db_session.query(Health.day, Health.health_score).filter_by(username=username).order_by(Health.day).all()
+    calorie_burnt = db_session.query(Exercise.day, Exercise.burnt_calories).filter_by(username=username).order_by(Exercise.day).all()
+    calorie_intake = db_session.query( Nutrition.day, Nutrition.calories).filter_by(username=username).order_by(Nutrition.day).all()
+    
+    other_nutrients = db_session.query(Nutrition.day, Nutrition.protein, Nutrition.fat, Nutrition.Sat_fat, Nutrition.carbs, Nutrition.carbs).filter_by(username=username).order_by(Nutrition.day).all()
+    
+    health_score_df = convert_to_df(health_score, 2)
+    calorie_burnt_df = convert_to_df(calorie_burnt, 2)
+    calorie_intake_df = convert_to_df(calorie_intake, 2)
+    other_nutrients_df = convert_to_df(other_nutrients,5)
+
+    calorie_plot_df = pd.merge(calorie_burnt_df, calorie_intake_df, on='day')
+    calorie_plot_df = calorie_plot_df.rename(columns={'day': 'Date', 'burnt_calories': 'Calories Burnt', 'calories': 'Calories Consumed'})
+    other_nutrients_df = other_nutrients_df.rename(columns={'day':'Date'})
+    health_score_df = health_score_df.rename(columns={'day':'Date'})
+    make_plots(calorie_plot_df, username, "Calories")
+    make_plots(other_nutrients_df, username, "Nutrients")
+    # make_plots(health_score_df, username, "Health Score")
+    
     return render_template("health.html", user_data=user_data, form = form, leaderboard=leaderboard)
 
 @app.route("/signup", methods=["GET", "POST"])
@@ -512,7 +572,7 @@ def signup():
         db_session.commit()
         print(users)
         # flash(f"Account created for {form.username.data}!", "success")
-        return redirect(url_for('login', title="Home"))
+        return redirect(url_for('login', title="login"))
     return render_template("signup.html", form=form, title="Signup")
 
 if(__name__) == "__main__":

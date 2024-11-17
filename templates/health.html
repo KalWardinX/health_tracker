@@ -189,38 +189,6 @@
                 </div>
                 </li>
                 {% endfor %}
-                <!-- <li>
-                <div class="leaderboard-child-1">
-                    <span>User1</span> <span>Healthscore</span>
-                </div>
-                </li>
-                <li><div class="leaderboard-child-1">
-                    <span>User1</span> <span>Healthscore</span>
-                </div>
-                </li>
-                <li>
-                <div class="leaderboard-child-1">
-                    <span>User1</span> <span>Healthscore</span>
-                </div>
-                </li>
-                <li><div class="leaderboard-child-1">
-                    <span>User1</span> <span>Healthscore</span>
-                </div>
-                </li>
-                <li>
-                <div class="leaderboard-child-1">
-                    <span>User1</span> <span>Healthscore</span>
-                </div>
-                </li>
-                <li><div class="leaderboard-child-1">
-                    <span>User1</span> <span>Healthscore</span>
-                </div>
-                </li>
-                <li>
-                <div class="leaderboard-child-1">
-                    <span>User1</span> <span>Healthscore</span>
-                </div>
-                </li> -->
             </ol>
             </div>
         </div>
@@ -230,9 +198,15 @@
 <div class="box2 card">
     <div class="calorie-burnt">
         Calories Burnt Plot
+        <img src="{{ user_data['user'].username}}_Calories.png">
     </div>
     <div class="health-score">
-        Health Score Plot
+        Nutrients Plot
+        <img src="{{ user_data['user'].username}}_Nutrients.png">
+    </div>
+    <div class="health-score">
+        Health Score
+        <img src="{{ user_data['user'].username}}_Health Score.png">
     </div>
 </div>
 
