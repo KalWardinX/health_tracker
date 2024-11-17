@@ -58,15 +58,6 @@ class MultiCheckboxField(SelectMultipleField):
     widget = widgets.ListWidget(prefix_label=False)
     option_widget = widgets.CheckboxInput()
 
-# class SearchForm(FlaskForm):
-#     __items = []
-#     i = 0
-#     for food_dict in data['Nutrition Values']:
-#         __items.append((i,food_dict['Food']))
-#         i+=1
-#     items = MultiCheckboxField('Food Items', choices=__items, option_widget=None)
-#     submit = SubmitField('Submit')
-
 class NutritionForm(FlaskForm):
     food_items = TextAreaField("food-items", validators=[DataRequired()])
     submit = SubmitField('Submit')
@@ -102,20 +93,18 @@ class Users(Base):
     bmi = Column(Float)
     weight = Column(Float)
     height = Column(Float)
-    # user = relationship("User", back_populates="nutrtion")
 
 class Nutrition(Base):
     __tablename__ = 'nutrition'
     id = Column(Integer, primary_key=True)
     username = Column(String, ForeignKey("users.username"))
     day = Column(String)
-    protein = Column(Float)
-    calories = Column(Float)
-    fat = Column(Float)
-    Sat_fat = Column(Float)
-    carbs = Column(Float)
-    fiber = Column(Float)
-    # tasks = relationship("Nutrition", back_populates="users")
+    protein = Column(Float, default=0.0)
+    calories = Column(Float, default=0.0)
+    fat = Column(Float, default=0.0)
+    Sat_fat = Column(Float, default=0.0)
+    carbs = Column(Float, default=0.0)
+    fiber = Column(Float, default=0.0)
     
     def __str__(self):
         return f'{self.id}, Day={self.day}, Protein={self.protein}, Cal={self.calories}, fat={self.fat}, SAt={self.Sat_fat}, carb={self.carbs}, fib={self.fiber})'
@@ -125,17 +114,16 @@ class Exercise(Base):
     id = Column(Integer, primary_key=True)
     username = Column(String, ForeignKey("users.username"))
     day = Column(String)
-    burnt_calories = Column(Float)
+    burnt_calories = Column(Float, default=0.0)
     exercise_names = Column(String)
-    duration = Column(Integer)
-    # tasks = relationship("Exercise", back_populates="users")
+    duration = Column(Integer, default=0)
 
 class Health(Base):
     __tablename__ = 'health'
     id = Column(Integer, primary_key=True)
     username = Column(String, ForeignKey("users.username"))
     day = Column(String)
-    health_score = Column(Integer)
+    health_score = Column(Integer, default=0)
 
 class NutritionSearchForm(FlaskForm):
     search = StringField('Search', validators=[DataRequired()])
@@ -165,7 +153,6 @@ class LoginForm(FlaskForm):
     username = StringField('Username/Email', 
                            validators=[DataRequired(), Length(min=2, max=20)])
     password = PasswordField('Password', validators=[DataRequired()])
-    # remember = BooleanField('Remember me')
     submit = SubmitField('Log In')
         
 ###########################
@@ -268,26 +255,90 @@ def convert_to_df(data, tuple_length):
 
 # MAKE PLOTS AND SAVE THEM AS .png
 def make_plots(df, username, title):
-    if(title == "Calories"):
-        plt.bar(df['Date'], df['Calories Burnt'], df['Calories Consumed'])
-    elif(title == "Nutrients"):
-        plt.bar(df['Date'], df['protein'])
-    else:
-        plt.bar(df['Date'], df['health_score'])
 
+    width = 0.2
+    # CALORIE PLOT
+    if(title == "Calories"):
+ 
+        calories_burnt = range(len(df['Date'])) 
+        calories_intake = [pos + width for pos in calories_burnt]
+
+        plt.figure(figsize=(5, 5))
+
+        plt.bar(df['Date'], df['Calories Burnt'], width=width, label='Calories Burnt', color='lightgreen', edgecolor='black')
+        plt.bar(calories_intake, df['Calories Consumed'], width=width, label='Calories Consumed', color='skyblue', edgecolor='black')
+
+        plt.xticks([pos + width / 2 for pos in calories_burnt], df['Date'], fontsize=10)  
+        plt.xlabel('Date', fontsize=12)
+        plt.ylabel('Amount (kcal)', fontsize=12)
+        plt.title('Calories Burnt vs Consumed Over Time', fontsize=14, fontweight='bold')
+        plt.legend(fontsize=10)
+        plt.grid(axis='y', linestyle='--', alpha=0.7)
+        plt.savefig(f"static/images/{username}_{title}.png", transparent=True, dpi=1500)
+        plt.clf()
+
+    # Nutrient plot
+    elif(title == "Nutrients"):
+       
+        protein = range(len(df['Date'])) 
+        fat = [x + width for x in protein]
+        Sat_fat = [x + width for x in fat]
+        carbs = [x + width for x in Sat_fat]
+        fiber = [x + width for x in carbs]
+
+        plt.figure(figsize=(7, 5))
+
+        plt.bar(df['Date'], df['protein'], width=width, label='Protein', color='red', edgecolor='black')
+        plt.bar([pos for pos in fat], df['fat'], width=width, label='Fat', color='yellow', edgecolor='black')
+        plt.bar([pos for pos in Sat_fat], df['Sat_fat'], width=width, label='Sat_fat', color='salmon', edgecolor='black')
+        plt.bar([pos for pos in carbs], df['carbs'], width=width, label='Carbs', color='skyblue', edgecolor='black')
+        plt.bar([pos for pos in fiber], df['fiber'], width=width, label='Fiber', color='lightgreen', edgecolor='black')
+
+
+        plt.xticks([pos + width*2 for pos in protein], df['Date'], fontsize=10)  
+        plt.xlabel('Date', fontsize=12)
+        plt.ylabel('Amount (gm)', fontsize=12)
+        plt.title('Nutrients Consumed Over Time', fontsize=14, fontweight='bold')
+        plt.legend(fontsize=10)
+        plt.grid(axis='y', linestyle='--', alpha=0.7)
+        plt.savefig(f"static/images/{username}_{title}.png", transparent=True, dpi=1500)
+        plt.clf()
+
+    # HEALTH_SCORE PLOT    
+    else:
+
+        health = range(len(df['Date'])) 
+
+        plt.figure(figsize=(5, 5))
+
+        plt.bar(df['Date'], df['health_score'], width=width, label='Health Score', color='darkblue', edgecolor='black')
+
+        plt.xticks([pos for pos in health], df['Date'], fontsize=10)  
+        plt.xlabel('Date', fontsize=12)
+        plt.ylabel('Health Score', fontsize=12)
+        plt.title('Health Score vs Time', fontsize=14, fontweight='bold')
+        plt.legend(fontsize=10)
+        plt.grid(axis='y', linestyle='--', alpha=0.7)
+        plt.savefig(f"static/images/{username}_{title}.png", transparent=True, dpi=1500)
+        plt.clf()
+
+def make_plot_line(df, username, title):
+    
+    plt.plot(df['Date'], df['health_score'], color='darkblue', marker='X', linewidth=2)
+    plt.xlabel("Date")
+    plt.ylabel("Health Score")
     plt.title(title)
-    plt.xlabel('Date')
-    plt.ylabel('Amount')
-    plt.savefig(f"static/images/{username}_{title}.png")
+    plt.savefig(f"static/images/{username}_{title}.png", transparent=True, dpi=1500)
+    plt.clf()
 
 def update_plots():
     username = session['username']
 
-    health_score = db_session.query(Health.day, Health.health_score).filter_by(username=username).order_by(Health.day).all()
-    calorie_burnt = db_session.query(Exercise.day, Exercise.burnt_calories).filter_by(username=username).order_by(Exercise.day).all()
-    calorie_intake = db_session.query( Nutrition.day, Nutrition.calories).filter_by(username=username).order_by(Nutrition.day).all()
+    health_score = db_session.query(Health.day, Health.health_score).filter_by(username=username).order_by(Health.day.desc()).all()
+    calorie_burnt = db_session.query(Exercise.day, Exercise.burnt_calories).filter_by(username=username).order_by(Exercise.day.desc()).all()
+    calorie_intake = db_session.query( Nutrition.day, Nutrition.calories).filter_by(username=username).order_by(Nutrition.day.desc()).all()
     
-    other_nutrients = db_session.query(Nutrition.day, Nutrition.protein, Nutrition.fat, Nutrition.Sat_fat, Nutrition.carbs, Nutrition.carbs).filter_by(username=username).order_by(Nutrition.day).all()
+    other_nutrients = db_session.query(Nutrition.day, Nutrition.protein, Nutrition.fat, Nutrition.Sat_fat, Nutrition.carbs, Nutrition.fiber).filter_by(username=username).order_by(Nutrition.day).all()
     
     health_score_df = convert_to_df(health_score, 2)
     calorie_burnt_df = convert_to_df(calorie_burnt, 2)
@@ -298,14 +349,63 @@ def update_plots():
     calorie_plot_df = calorie_plot_df.rename(columns={'day': 'Date', 'burnt_calories': 'Calories Burnt', 'calories': 'Calories Consumed'})
     other_nutrients_df = other_nutrients_df.rename(columns={'day':'Date'})
     health_score_df = health_score_df.rename(columns={'day':'Date'})
-    make_plots(calorie_plot_df, username, "Calories")
-    make_plots(other_nutrients_df, username, "Nutrients")
-    make_plots(health_score_df, username, "Health")
+    
+    make_plots(calorie_plot_df.head(10), username, "Calories")
+    make_plots(other_nutrients_df.head(10), username, "Nutrients")
+    make_plots(health_score_df.head(10), username, "Health")
+    make_plot_line(health_score_df, username, "Health_overall")
+
+def make_pie(parameter, limit, username, title):
+
+    colors = ['lightgreen', 'whitesmoke']
+    remaining = limit - parameter
+    data = [parameter, remaining]
+
+    if title == "Protein":
+        
+        if limit*2 < parameter:
+            remaining = parameter - limit
+            data = [limit*2, remaining]
+            # labels = [f"{limit} gm", f"{limit*2} gm", f"{parameter} gm"]
+            limit = parameter
+            colors = ['lightgreen','red']
+        
+        elif limit < parameter:
+            remaining = limit*2 - parameter
+            data = [parameter, remaining]
+            # labels = [f"{limit} gm", f"{parameter} gm", f"{limit*2} gm"]
+            limit *= 2
+        
+        else:
+            data = [parameter, limit*2]
+            limit *= 2
+    else:
+        if limit < parameter:
+            limit = parameter
+            remaining = limit - parameter
+            data = [parameter, remaining]
+            colors=['Red', 'lightgreen']
+
+    plt.figure(figsize=(4, 4))  
+    plt.pie(
+        data,
+        startangle=0,
+        colors=colors,
+        wedgeprops={'edgecolor': 'whitesmoke', 'width':0.5}
+    )
+
+    plt.text(0, 0, f"0-{limit}", ha='center', va='center', color='white', fontsize=14, fontweight='bold')
+    # plt.axis('equal')
+    # plt.title(title, fontsize=14)
+    plt.savefig(f"static/images/{username}_{title}.png", transparent=True, dpi=300)
+    plt.clf()
+
 ###########################
 # ** ROUTES **            #
 ###########################
-@app.route('/home', methods=["GET", "POST"])
-def home():
+
+@app.route('/nutrition', methods=["GET", "POST"])
+def nutrition():
     __food_items = []
     _food_dict = {}
     i = 0
@@ -314,19 +414,14 @@ def home():
         _food_dict[food_dict['Food']] = i
         i+=1
     form = NutritionForm()
-    # selected_items = request.form.getlist('items')
-    # print(selected_items)
-    # print('hi')
+ 
 
     if request.method == 'POST':
-        # push to database
-        # print('hi')
+        
         if 'username' in session:
             username = session['username']
             print(username)
 
-            # flash(f'Selcected Food Items: {", ".join(form.food_items.data)}', 'success')
-            # print(form.food_items.data)
             protein = 0
             calories = 0
             fat = 0
@@ -335,43 +430,38 @@ def home():
             fiber = 0
             for i in form.food_items.data.split('; '):
                 _i = i.split('(x')[0]
-                # print(type(_i))
-                # print(_i)
+                
                 food = data_food['Nutrition Values'][_food_dict[_i]]
-                # print(food)
-                protein += float(food['Protein'].replace(',','')) if food['Protein']!='t' else 0
-                fat += float(food['Fat'].replace(',','')) if food['Fat']!='t' else 0
-                Sat_fat += float(food['Sat.Fat'].replace(',','')) if food['Sat.Fat']!='t' else 0
-                carbs += float(food['Carbs'].replace(',','')) if food['Carbs']!='t' else 0
-                fiber += float(food['Fiber'].replace(',','')) if food['Fiber']!='t' else 0
-                calories += float(food['Calories'].replace(',','')) if food['Calories']!='t' else 0
+           
+                protein += float(food['Protein'].replace(',',''))/100 if food['Protein']!='t' else 0
+                fat += float(food['Fat'].replace(',',''))/100 if food['Fat']!='t' else 0
+                Sat_fat += float(food['Sat.Fat'].replace(',',''))/100 if food['Sat.Fat']!='t' else 0
+                carbs += float(food['Carbs'].replace(',',''))/100 if food['Carbs']!='t' else 0
+                fiber += float(food['Fiber'].replace(',',''))/100 if food['Fiber']!='t' else 0
+                calories += float(food['Calories'].replace(',',''))/100 if food['Calories']!='t' else 0
 
             day = date.today()
-            user = db_session.query(Users).filter_by(username=username).first()
+            # user = db_session.query(Users).filter_by(username=username).first()
             nutrition_data = db_session.query(Nutrition).filter_by(username=username, day=day).first()
-            exercise_data = db_session.query(Exercise).filter_by(username=username, day=day).first()
+            # exercise_data = db_session.query(Exercise).filter_by(username=username, day=day).first()
+
             if(nutrition_data):
                 print(nutrition_data)
                 protein += nutrition_data.protein
                 calories += nutrition_data.calories
+                calories = round(calories,2)
                 fat += nutrition_data.fat
+                fat = round(fat,2)
                 Sat_fat += nutrition_data.Sat_fat
+                Sat_fat = round(Sat_fat,2)
                 carbs += nutrition_data.carbs
+                carbs = round(carbs,2)
                 fiber += nutrition_data.fiber
+                fiber = round(fiber,2)
                 nutrition_data = db_session.query(Nutrition).filter_by(username=username, day=day).update({ "protein": protein, "calories" : calories, "fat": fat, "Sat_fat": Sat_fat, "carbs": carbs, "fiber": fiber})
                 db_session.commit()
                 update_health(username, day, is_nutrition_changed=True, is_exercise_changed=False)
 
-                # db_session.query(Users).filter_by(username=username)
-                # db_session.commit()
-                # nutrition_data = db_session.query(Nutrition).filter_by(username=username, day=day).first()
-                # health_data = db_session.query(Health).filter_by(username=username, day=day).first()
-                # user_data = {
-                #         "user": user, 
-                #         "nutrition_data":nutrition_data, 
-                #         "exercise_data":exercise_data,
-                #         "health_data": health_data
-                #     }
                 update_plots()
                 return redirect(url_for('health'))
                 
@@ -390,21 +480,14 @@ def home():
                 db_session.add(nutrition_obj)
                 db_session.commit()
                 update_health(username, day, is_nutrition_changed=True, is_exercise_changed=False)
-                # nutrition_data = db_session.query(Nutrition).filter_by(username=username, day=day).first()
-                # health_data = db_session.query(Health).filter_by(username=username, day=day).first()
-                # user_data = {
-                #         "user": user, 
-                #         "nutrition_data":nutrition_data, 
-                #         "exercise_data":exercise_data,
-                #         "health_data": health_data
-                #     }
+                
                 update_plots()
                 return redirect(url_for('health'))
 
-    return render_template("home.html", title="Home", form=form, data=__food_items)
+    return render_template("nutrition.html", title="Home", form=form, data=__food_items)
 
-@app.route('/home2', methods=['GET', 'POST'])
-def home2():
+@app.route('/exercise', methods=['GET', 'POST'])
+def exercise():
     __exercises_items = []
     _exercises_dict = {}
     i = 0
@@ -416,32 +499,30 @@ def home2():
 
     form = ExerciseForm()    
     if request.method == 'POST':
-        # push to database
-        # print('hi')
+        
         if 'username' in session:
             username = session['username']
 
-            weight = 60
+            user = db_session.query(Users).filter_by(username=username).first()
+            weight = user.weight
+
             if request.method == "POST":
-                # flash(f'Selcected Exercise Items: {", ".join(form.exercise_items.data)}', 'success')
-                print(form.exercise_items)
+                duration = form.duration.data
                 burnt_calories = 0
                 exercise_names = ""
                 for i in form.exercise_items.data.split('; '):
                     _i = i.split('(x')[0]
                     exercise = data_exercise['Exercise Values'][_exercises_dict[_i]]
-                    burnt_calories = float(weight)*float(exercise["Calories per kg"])
+                    burnt_calories = float(weight)*float(exercise["Calories per kg"])*(float(duration)/60)
                     exercise_names += _i +"; "
                 
                 day = date.today()
-                user = db_session.query(Users).filter_by(username=username).first()
                 exercise_data = db_session.query(Exercise).filter_by(username=username, day=day).first()
-                nutrition_data = db_session.query(Nutrition).filter_by(username=username, day=day).first()
-                duration = form.duration.data
-                
+                # nutrition_data = db_session.query(Nutrition).filter_by(username=username, day=day).first()
 
                 if(exercise_data):
                     burnt_calories += exercise_data.burnt_calories
+                    burnt_calories = round(burnt_calories,2)
                     exercise_names += exercise_data.exercise_names
                     duration += exercise_data.duration
                     exercise_data = db_session.query(Exercise).filter_by(username=username, day=day).update({"burnt_calories": burnt_calories, "exercise_names": exercise_names, "duration": duration})
@@ -451,14 +532,7 @@ def home2():
                     db_session.commit()
 
                     update_health(username, day, is_nutrition_changed=False, is_exercise_changed=True)
-                    # exercise_data = db_session.query(Exercise).filter_by(username=username, day=day).first()
-                    # health_data = db_session.query(Health).filter_by(username=username, day=day).first()
-                    # user_data = {
-                    #         "user": user, 
-                    #         "nutrition_data":nutrition_data, 
-                    #         "exercise_data":exercise_data,
-                    #         "health_data": health_data
-                    #     }
+                    
                     update_plots()
                     return redirect(url_for('health'))
                     
@@ -477,7 +551,8 @@ def home2():
                     update_health(username, day, is_nutrition_changed=False, is_exercise_changed=True)
                     update_plots()
                     return redirect(url_for('health'))
-    return render_template("home2.html", title="Home", form=form, data=__exercises_items)
+                
+    return render_template("exercise.html", title="Home", form=form, data=__exercises_items)
 
 
 @app.route("/")
@@ -506,13 +581,12 @@ def login():
 
         flash("User doesn't exist")
 
-        # return redirect(url_for('home'))
+        # return redirect(url_for('nutrition'))
     return render_template("login.html", form=form, title='Login')
 
 @app.route("/health", methods=["GET", "POST"])
 def health():
 
-    print("in Health222")
     form = HeightWeightForm()
     username = session['username']
     day = date.today()
@@ -536,7 +610,12 @@ def health():
     exercises = get_exercises(username, day)    
     
     update_plots()
-    
+    make_pie(user.bmi, 25, username, "BMI")
+    if nutrition_data:
+        make_pie(nutrition_data.protein, user.weight, username, "Protein")
+    else:
+        make_pie(0, user.weight, username, "Protein")
+
     user_data = {
         "user": user, 
         "nutrition_data":nutrition_data, 
@@ -545,7 +624,10 @@ def health():
         "exercises": exercises,
         "calories_png": f'static/images/{username}_Calories.png',
         "nutrients_png": f'static/images/{username}_Nutrients.png',
-        "health_png": f'static//images/{username}_Health.png'
+        "health_png": f'static//images/{username}_Health.png',
+        "bmi_png": f'static//images/{username}_BMI.png',
+        "protein_png": f'static//images/{username}_Protein.png',
+        "health2_png": f'static//images/{username}_Health_overall.png'
     }
     return render_template("health.html", user_data=user_data, form = form, leaderboard=leaderboard)
 

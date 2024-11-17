@@ -15,10 +15,7 @@
     </div>
     <div class="nav-child-2">
         <div class="nav-child-3">
-            <a style="text-decoration: none; color: azure;" href="{{ url_for('home') }}"><i class="fa fa-fw fa-home"></i> Home</a>
-        </div>
-        <div class="nav-child-3">
-            <a style="text-decoration: none; color: azure;" href="#"><i class="fa fa-fw fa-envelope"></i> Contact</a>
+            <a style="text-decoration: none; color: azure;" href="{{ url_for('health') }}"><i class="fa fa-fw fa-home"></i> Home</a>
         </div>
         <div class="nav-child-3">
             <a style="text-decoration: none; color: azure;" href="{{ url_for('login') }}"><i class="fa fa-fw fa-user"></i> Logout</a>
@@ -28,21 +25,25 @@
 
 <div class="box1 card">
     <div class="bmi">
-        <div class="card bmi-child">
-            <div class="card-body " style="font-size: 4cap;"> BMI </div>
-            <div class="card-body" style="font-size: 2.5cap; font-style: normal; font-family: Arial, Helvetica, sans-serif;"> {{ user_data["user"].bmi }} </div>
+        <div class="card bmi-child-p">
+            <div class="card-body " style="font-size: 2.5cap; ">
+                BMI
+                <img src="{{ user_data['bmi_png'] }}" height="350px" width="350px">
+            </div>
+            <div class="card-body" style="font-size: 1.5cap; font-style: normal; font-family: Arial, Helvetica, sans-serif; margin-top: 20px;"> {{ user_data["user"].bmi }} </div>
+            <p style="color: rgb(26, 0, 221);">Ideal 0 - 25</p>
         </div>
-        <div class="card bmi-child">
+        <div class="card bmi-child-h">
             <div class="card-body" style="font-size: 4cap;"> Height </div>
             <div class="card-body" style="font-size: 2.5cap;"> {{ user_data["user"].height }} cm</div>
         </div>
     </div>
     <div class="bmi">
-        <div class="card bmi-child">
+        <div class="card bmi-child-w">
             <div class="card-body" style="font-size: 4cap;"> Weight </div>
             <div class="card-body" style="font-size: 2.5cap;"> {{ user_data["user"].weight }} kg</div>
         </div>
-        <div class="card bmi-child">
+        <div class="card bmi-child-w">
             <div class="card-body" style="font-size: 4cap;">Health Score</div>
             <div class="card-body" style="font-size: 2.5cap;">{{ user_data["health_data"].health_score }}</div>
         </div>
@@ -52,7 +53,7 @@
         <div style="margin-top: 10px; font-size: 3cap; font-family: 'Courier New', Courier, monospace;">Add today's data</div>
         
         <div class="exer_nutr">
-            <a href="{{ url_for('home') }}" class="nutrition  btn btn-outline-success btn-block">
+            <a href="{{ url_for('nutrition') }}" class="nutrition  btn btn-outline-success btn-block">
                 Nutrition
             </a>
             <div class="ht_wt">
@@ -80,7 +81,7 @@
                     </fieldset>
                 </form>
             </div>
-            <a href="{{ url_for('home2') }}" class="exercise  btn btn-outline-success btn-block">
+            <a href="{{ url_for('exercise') }}" class="exercise  btn btn-outline-success btn-block">
                     Exercise 
             </a>
         </div>
@@ -99,59 +100,21 @@
                     </div>
                 </li>
                 {% endfor %}
-                
-                <!-- <li>
-                <div class="leaderboard-child">
-                    <span>User1</span> &nbsp; &nbsp; &nbsp; <span>Healthscore</span>
-                </div>
-                </li>
-                <li><div class="leaderboard-child">
-                    <span>User1</span> &nbsp; &nbsp; &nbsp; <span>Healthscore</span>
-                </div>
-                </li>
-                <li>
-                <div class="leaderboard-child">
-                    <span>User1</span> &nbsp; &nbsp; &nbsp; <span>Healthscore</span>
-                </div>
-                </li>
-                <li><div class="leaderboard-child">
-                    <span>User1</span> &nbsp; &nbsp; &nbsp; <span>Healthscore</span> 
-                </div>
-                </li>
-                <li>
-                <div class="leaderboard-child">
-                    <span>User1</span> &nbsp; &nbsp; &nbsp; <span>Healthscore</span>
-                </div>
-                </li>
-                <li><div class="leaderboard-child">
-                    <span>User1</span> &nbsp; &nbsp; &nbsp; <span>Healthscore</span>
-                </div>
-                </li>
-                <li>
-                <div class="leaderboard-child">
-                    <span>User1</span> &nbsp; &nbsp; &nbsp; <span>Healthscore</span>
-                </div>
-                </li>
-                <li><div class="leaderboard-child">
-                    <span>User1</span> &nbsp; &nbsp; &nbsp; <span>Healthscore</span>
-                </div>
-                </li>
-                <li>
-                <div class="leaderboard-child">
-                    <span>User1</span> &nbsp; &nbsp; &nbsp; <span>Healthscore</span>
-                </div>
-                </li> -->
             </ol>
     </div>
 </div>
 <div class="today-data">
     <div class="bmi">
-        <div class="card bmi-child" style="background-image: linear-gradient(rgb(216, 214, 184, 0.6), rgb(96, 164, 163, 0.5)); font-family: 'Times New Roman', Times, serif;">
-            <div class="card-body" style="font-size: 4cap;"> Protein </div>
-            <div class="card-body" style="font-size: 2.5cap;"> {{ user_data["nutrition_data"].protein }} gm</div>
+        <div class="card bmi-child" style="background-image: linear-gradient(rgba(232, 231, 211, 0.6), rgba(134, 202, 201, 0.5)); font-family:cursive; height: 500px; width: 400px; padding: 0px;">
+            <div class="card-body" style="font-size: 2.0cap;">  
+                Protein
+                <img src="{{ user_data['protein_png'] }}" height="350px" width="350px"> 
+            </div>
+            <div class="card-body" style="font-size: 1.5cap;"> {{ user_data["nutrition_data"].protein }} gm</div>
+            <p style="color: rgb(0, 24, 146);">Ideal {{ user_data["user"].weight }} - {{ user_data["user"].weight*2 }} gm</p>
         </div>
-        <div class="card bmi-child" style="background-image: linear-gradient(rgb(216, 214, 184, 0.6), rgb(96, 164, 163, 0.5)); font-family: 'Times New Roman', Times, serif;">
-            <div class="card-body" style="font-size: 4cap;">Calorie intake</div>
+        <div class="card bmi-child" style="background-image: linear-gradient(rgba(234, 233, 213, 0.6), rgba(134, 202, 201, 0.5)); font-family:cursive; height: 300px; width: 400px; margin-top: 20px;">
+            <div class="card-body" style="font-size: 3cap;">Calorie intake</div>
             <div class="card-body" style="font-size: 2.5cap;"> {{ user_data["nutrition_data"].calories }} kcal</div>
         </div>
     </div>
@@ -161,10 +124,10 @@
     </div>
     <div style="display: flex; flex-direction: row; margin-top: 150px; margin-bottom: 10px;">
     <div class="today-data-child">
-        <div class="today-data-child-1"> Fat &nbsp; &nbsp;&nbsp; &nbsp;{{ user_data["nutrition_data"].fat }}</div>
-        <div class="today-data-child-1"> sat_fat &nbsp; &nbsp; &nbsp;{{ user_data["nutrition_data"].Sat_fat }}</div>
-        <div class="today-data-child-1"> carbs &nbsp; &nbsp; &nbsp;{{ user_data["nutrition_data"].carbs }}</div>
-        <div class="today-data-child-1"> fiber &nbsp; &nbsp; &nbsp;{{ user_data["nutrition_data"].fiber }}</div>
+        <div class="today-data-child-1"> Fat &nbsp; &nbsp;&nbsp; &nbsp;{{ user_data["nutrition_data"].fat }} gm</div>
+        <div class="today-data-child-1"> sat_fat &nbsp; {{ user_data["nutrition_data"].Sat_fat }} gm</div>
+        <div class="today-data-child-1"> carbs &nbsp; &nbsp; &nbsp;{{ user_data["nutrition_data"].carbs }} gm</div>
+        <div class="today-data-child-1"> fiber &nbsp; &nbsp; &nbsp;{{ user_data["nutrition_data"].fiber }} gm</div>
     </div>
         <div class="today-data-child" style="text-align: center;"> 
             <div style="margin-top: 50px; font-size: 3cap;">
@@ -197,19 +160,18 @@
 
 <div class="box2 card">
     <div class="calorie-burnt">
-        Calories Burnt Plot
-        <img src="{{ user_data['calories_png'] }}">
+        <img src="{{ user_data['calories_png'] }}" height="600px" width="800px">
     </div>
     <div class="health-score">
-        Nutrients Plot
-        <img src="{{ user_data['nutrients_png'] }}">
-    </div>
-    <div class="health-score">
-        Health Score
-        <img src="{{ user_data['health_png'] }}">
+        <img src="{{ user_data['health_png'] }}" height="600px" width="800px">
     </div>
 </div>
-
+<div class="nutrients">
+    <img src="{{ user_data['nutrients_png'] }}"height="800px" width="1200px">
+</div>
+<div class="nutrients">
+    <img src="{{ user_data['health2_png'] }}"height="800px" width="1200px">
+</div>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
