@@ -225,6 +225,10 @@
     margin-bottom: 30px;
     background-image: linear-gradient(rgb(191, 225, 244), rgb(225, 238, 218));
     border-radius: 10px;
+    align-items: center;
+    display: flex;
+    padding: 10px 10px 10px 10px;
+    justify-content: center;
     /* width: 900px; */
 }
 
