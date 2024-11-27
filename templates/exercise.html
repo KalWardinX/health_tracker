@@ -135,15 +135,6 @@ background-image: linear-gradient(to right, rgb(188, 190, 209, 0.5), rgba(135, 1
         }
     </script>
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            <ul>
-                {% for category, message in messages %}
-                    <li style="color: red ;">{{ message }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-    {% endwith %}
 </div>    
 </div>
 </div>

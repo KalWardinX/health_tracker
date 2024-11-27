@@ -72,12 +72,12 @@ def nutrition():
                 nutrition_obj = Nutrition(
                     username = username,
                     day = day,
-                    protein = protein,
-                    calories = calories,
-                    fat = fat,
-                    Sat_fat = Sat_fat,
-                    carbs = carbs,
-                    fiber = fiber
+                    protein = round(protein,2),
+                    calories = round(calories,2),
+                    fat = round(fat,2),
+                    Sat_fat = round(Sat_fat,2),
+                    carbs = round(carbs,2),
+                    fiber = round(fiber,2)
                 )
 
                 db_session.add(nutrition_obj)
@@ -143,7 +143,7 @@ def exercise():
                     exercise_obj = Exercise(
                         username = username,
                         day = day,
-                        burnt_calories = burnt_calories,
+                        burnt_calories = round(burnt_calories,2),
                         # duration = duration,
                         exercise_names = exercise_names
                     )
@@ -161,7 +161,9 @@ def exercise():
 @app.route("/")
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    
+
+
+        
     form = LoginForm()
     
     if form.validate_on_submit():
@@ -187,6 +189,21 @@ def login():
         # return redirect(url_for('nutrition'))
     return render_template("login.html", form=form, title='Login')
 
+@app.route("/logout", methods=['GET'])
+def logout():
+
+    username = session['username']
+    pics = [
+        f'static/images/{username}_Calories.png',
+        f'static/images/{username}_Nutrients.png',
+        f'static//images/{username}_Health.png',
+        f'static//images/{username}_BMI.png',
+        f'static//images/{username}_Protein.png'
+    ]
+    for i in pics:
+        os.remove(i)
+    return redirect(url_for('login'))
+
 @app.route("/health", methods=["GET", "POST"])
 def health():
 
@@ -208,7 +225,9 @@ def health():
     nutrition_data = db_session.query(Nutrition).filter_by(username=username, day=day).first()
     exercise_data = db_session.query(Exercise).filter_by(username=username, day=day).first()
     health_data = db_session.query(Health).filter_by(username=username, day=day).first()
-    health_score = round(health_data.health_score,2)
+    health_score = 0
+    if health_data:
+        health_score = round(health_data.health_score,2)
     db_session.query(Health).filter_by(username=username, day=day).update({'health_score': health_score})
     db_session.commit()
     leaderboard = get_top_10(day)

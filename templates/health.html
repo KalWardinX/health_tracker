@@ -18,7 +18,7 @@
             <a style="text-decoration: none; color: azure;" href="{{ url_for('health') }}"><i class="fa fa-fw fa-home"></i> Home</a>
         </div>
         <div class="nav-child-3">
-            <a style="text-decoration: none; color: azure;" href="{{ url_for('login') }}"><i class="fa fa-fw fa-user"></i> Logout</a>
+            <a style="text-decoration: none; color: azure;" href="{{ url_for('logout') }}"><i class="fa fa-fw fa-user"></i> Logout</a>
         </div>
     </div>
 </div>
@@ -45,7 +45,13 @@
         </div>
         <div class="card bmi-child-w">
             <div class="card-body" style="font-size: 4cap;">Health Score</div>
-            <div class="card-body" style="font-size: 2.5cap;">{{ user_data["health_data"].health_score }}</div>
+            <div class="card-body" style="font-size: 2.5cap;">
+                {%if user_data["health_data"].health_score %}
+                {{user_data["health_data"].health_score}}
+                {% else %}
+                0
+                {%endif%}
+            </div>
         </div>
     </div>
     <div class="add-data">

@@ -99,7 +99,7 @@ def convert_to_df(data, tuple_length):
 # MAKE PLOTS AND SAVE THEM AS .png
 def make_plots(df, username, title):
 
-    width = 0.2
+    width = 0.15
     # CALORIE PLOT
     if(title == "Calories"):
  
@@ -118,7 +118,7 @@ def make_plots(df, username, title):
         plt.legend(fontsize=8)
         plt.tight_layout()
         plt.grid(axis='y', linestyle='--', alpha=0.7)
-        plt.savefig(f"static/images/{username}_{title}.png", transparent=True, dpi=1000)
+        plt.savefig(f"static/images/{username}_{title}.png", transparent=True, dpi=200)
         plt.clf()
 
     # Nutrient plot
@@ -146,7 +146,7 @@ def make_plots(df, username, title):
         plt.legend(fontsize=8)
         plt.tight_layout()
         plt.grid(axis='y', linestyle='--', alpha=0.7)
-        plt.savefig(f"static/images/{username}_{title}.png", transparent=True, dpi=1000)
+        plt.savefig(f"static/images/{username}_{title}.png", transparent=True, dpi=200)
         plt.clf()
 
 def make_plot_line(df, username, title):
@@ -157,7 +157,7 @@ def make_plot_line(df, username, title):
     plt.xlabel("Date")
     plt.ylabel("Health Score")
     plt.title(title)
-    plt.savefig(f"static/images/{username}_{title}.png", transparent=True, dpi=1000)
+    plt.savefig(f"static/images/{username}_{title}.png", transparent=True, dpi=200)
     plt.clf()
 
 def update_plots():
