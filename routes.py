@@ -197,6 +197,9 @@ def login():
 @app.route("/logout", methods=['GET'])
 def logout():
 
+    if not(session and 'username' in session):
+        return(redirect(url_for('login')))
+
     username = session['username']
     pics = [
         f'static/images/{username}_Calories.png',
