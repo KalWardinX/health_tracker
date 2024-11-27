@@ -4,6 +4,8 @@ from helpers import *
 
 @app.route('/nutrition', methods=["GET", "POST"])
 def nutrition():
+    if not(session and 'username' in session):
+        return(redirect(url_for('login')))
     __food_items = []
     _food_dict = {}
     i = 0
@@ -91,6 +93,9 @@ def nutrition():
 
 @app.route('/exercise', methods=['GET', 'POST'])
 def exercise():
+    if not(session and 'username' in session):
+        return(redirect(url_for('login')))
+
     __exercises_items = []
     _exercises_dict = {}
     i = 0
@@ -202,12 +207,16 @@ def logout():
     ]
     for i in pics:
         os.remove(i)
+    session.pop('username', None)
     return redirect(url_for('login'))
 
 @app.route("/health", methods=["GET", "POST"])
 def health():
 
     form = HeightWeightForm()
+    if not(session and 'username' in session):
+        return(redirect(url_for('login')))
+    
     username = session['username']
     day = date.today()
 

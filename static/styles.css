@@ -28,6 +28,17 @@
     background-color: #021b83;
     color: white;
 }
+.nav-child-4{
+    align-items: center;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-right: 10px;
+    padding-bottom: 5px;
+    border-radius: 5px;
+    /* text-decoration: none; */
+    /* background-color: #97a0c3; */
+    color: rgb(192, 59, 59);
+}
 
 .nav-child-3:hover{
     background-color: #0095f6;
