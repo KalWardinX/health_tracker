@@ -163,9 +163,9 @@ def make_plot_line(df, username, title):
 def update_plots():
     username = session['username']
 
-    health_score = db_session.query(Health.day, Health.health_score).filter_by(username=username).order_by(Health.day.desc()).all()
-    calorie_burnt = db_session.query(Exercise.day, Exercise.burnt_calories).filter_by(username=username).order_by(Exercise.day.desc()).all()
-    calorie_intake = db_session.query( Nutrition.day, Nutrition.calories).filter_by(username=username).order_by(Nutrition.day.desc()).all()
+    health_score = db_session.query(Health.day, Health.health_score).filter_by(username=username).order_by(Health.day).all()
+    calorie_burnt = db_session.query(Exercise.day, Exercise.burnt_calories).filter_by(username=username).order_by(Exercise.day).all()
+    calorie_intake = db_session.query( Nutrition.day, Nutrition.calories).filter_by(username=username).order_by(Nutrition.day).all()
     
     other_nutrients = db_session.query(Nutrition.day, Nutrition.protein, Nutrition.fat, Nutrition.Sat_fat, Nutrition.carbs, Nutrition.fiber).filter_by(username=username).order_by(Nutrition.day).all()
     
@@ -179,6 +179,7 @@ def update_plots():
     other_nutrients_df = other_nutrients_df.rename(columns={'day':'Date'})
     health_score_df = health_score_df.rename(columns={'day':'Date'})
     
+    print(calorie_plot_df)
     make_plots(calorie_plot_df.head(10), username, "Calories")
     make_plots(other_nutrients_df.head(10), username, "Nutrients")
     # make_plots(health_score_df.head(10), username, "Health")
